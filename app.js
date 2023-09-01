@@ -4,7 +4,7 @@ const app = express();
 // var logger = require('morgan'); //morgan is for next function we are using in our routes after req,res,next
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-// const cors = require('cors');
+const cors = require('cors');
 // const AWS = require('aws-sdk');
 // const fs = require('fs');
 // const fileRead= require('express-fileupload');
@@ -19,9 +19,9 @@ const mongoose = require('mongoose');
 // // secrets = require('./secrets'),
 // awsController = require('./aws-controller');
 
-// //for mail sevice from node js
-// // it used to send mails to users
-// const nodemailer = require('nodemailer');
+//for mail sevice from node js
+// it used to send mails to users
+const nodemailer = require('nodemailer');
 
 // const multer = require('multer');
 // const upload = multer({ dest: 'uploads/'});
@@ -45,7 +45,7 @@ mongoose.connect('mongodb+srv://venuazmeera:mongo_venu69@cluster0.7ewrhqm.mongod
 //app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-// app.use(cors());
+app.use(cors());
 // app.use(Onesignal);
 // new addings
 // app.use(helmet());
