@@ -1,20 +1,21 @@
 //importing express in to our project app
 const express = require('express');
 const app = express();
-// var logger = require('morgan'); //morgan is for next function we are using in our routes after req,res,next
+var logger = require('morgan'); //morgan is for next function we are using in our routes after req,res,next
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-// const AWS = require('aws-sdk');
-// const fs = require('fs');
-// const fileRead= require('express-fileupload');
+const AWS = require('aws-sdk');
+const fs = require('fs');
+const fileRead= require('express-fileupload');
+//for hiding secret keys in .env file so no one can access
+dotenv = require('dotenv');
+
 // var os = require('os');
 
 
 // //new addings i need remove these
 // http = require('http'),
-// dotenv = require('dotenv'),
-// // errorHandler = require('errorhandler'),
 // helmet = require('helmet'),
 // // secrets = require('./secrets'),
 // awsController = require('./aws-controller');
@@ -36,7 +37,7 @@ const userSignupRoutes = require('./routes/Signup');
 const sendNotificationsRoutes = require('./routes/sendNotifications');
 const todoRoutes = require('./routes/todo');
 const blogRoutes = require('./routes/blog');
-// const errorHandler = require('errorhandler');
+const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
 
 //mongo db connection
@@ -60,26 +61,26 @@ if(process.env.NODE_ENV === 'development'){
 
 
 // // //for nodenailer
-// const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     // port: 3000,
-//     logger: true,
-//     debug: true,
-//     secureConnection: false,
-//     auth : {
-//         user: "venuazmeera69@gmail.com",
-//         pass: "srquxcuhznnkngqe"
-//     }
-// });
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    // port: 3000,
+    logger: true,
+    debug: true,
+    secureConnection: false,
+    auth : {
+        user: "venuazmeera69@gmail.com",
+        pass: "srquxcuhznnkngqe"
+    }
+});
 
 
-// const options = {
-//     // 
-//     from: "venuazmeera69@gmail.com",
-//     to: "venuazmeera69@gmail.com",
-//     subject: "Sending mail with node js",
-//     text: "hello there"
-// };
+const options = {
+    // 
+    from: "venuazmeera69@gmail.com",
+    to: "venuazmeera69@gmail.com",
+    subject: "Sending mail with node js",
+    text: "hello there"
+};
 
 
 // transporter.sendMail(options, function (err, info){
@@ -127,63 +128,65 @@ app.get("/", (req, res, next)=>{
 // const port = 3000
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(fileRead());
+app.use(fileRead());
 //app.use(express.urlencoded());
 // var type = upload.single('recfile');
 //app.use(multer({ dest: './uploads/'}));
 
 //for making access key and screet keys to hide 
-// const bucketName = process.env.AWS_BUCKET_NAME;
-// const region = process.env.AWS_BUCKET_REGION;
-// const accessKeyId = process.env.AWS_ACCESS_KEY;
-// const secretAccessKey = process.env.AWS_SECRET_KEY;
+const bucketName = process.env.AWS_BUCKET_NAME;
+// console.log(bucketName);
+const region = process.env.AWS_BUCKET_REGION;
+const accessKeyId = process.env.AWS_ACCESS_KEY;
+const secretAccessKey = process.env.AWS_SECRET_KEY;
 
-// //send video and audio and images and pdf's files to s3
-// app.post('/uploadfile', (req, res) => {
+//send video and audio and images and pdf's files to s3
+app.post('/uploadfile', (req, res) => {
   
-//     console.log(req.files.filename);
+    console.log(req.files.filename);
   
-//   const s3 = new AWS.S3({
-//      accessKeyId,
-//     secretAccessKey
-//   })
+  const s3 = new AWS.S3({
+     accessKeyId:"AKIAZ74FJQGL523L7WFP",
+    secretAccessKey:"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"
+  })
 
-// //  const filename= '/Users/rahulrajput/Desktop/video/DJI_0030.MP4';
+//  const filename= '/Users/rahulrajput/Desktop/video/DJI_0030.MP4';
 
-// const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
+const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
 
  
-//   const fileContent = fs.createReadStream(filename);
-//   //console.log(fileContent);
-//   const params = {
-//     Bucket: bucketName,
-//     Key:req.files.filename.name,
-//     Body: req.files.filename.data
-//   }
+  const fileContent = fs.createReadStream(filename);
+  //console.log(fileContent);
+  const params = {
+    Bucket: "student-corner",
+    Key:req.files.filename.name,
+    Body: req.files.filename.data
+  }
   
-// //   console.log(url);
+//   console.log(url);
 
-//   s3.upload(params, (err, data) => {
-//     if (err) {
-//         console.log(err);
-//       reject(err)
-//     }
+  s3.upload(params, (err, data) => {
+    if (err) {
+        console.log(err);
+      reject(err)
+    }
 
-//     res.send({"message":data.Location, "isSuccess": true})
+    res.send({"message":data.Location, "isSuccess": true})
 
     
-//   })
+  })
 
-//   //res.send('Hello World!');
-
-
+  //res.send('Hello World!');
 
 
 
 
 
 
-// })
+
+
+})
+
 
 // // app.listen(port, () => {
 // //   console.log(`Example app listening on port ${port}`)
