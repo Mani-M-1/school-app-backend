@@ -9,7 +9,7 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const fileRead= require('express-fileupload');
 //for hiding secret keys in .env file so no one can access
-dotenv = require('dotenv');
+// dotenv = require('dotenv');
 
 // var os = require('os');
 
@@ -37,7 +37,7 @@ const userSignupRoutes = require('./routes/Signup');
 const sendNotificationsRoutes = require('./routes/sendNotifications');
 const todoRoutes = require('./routes/todo');
 const blogRoutes = require('./routes/blog');
-const errorHandler = require('errorhandler');
+// const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
 
 //mongo db connection
@@ -56,7 +56,7 @@ app.use(cors());
 //for .env file
 if(process.env.NODE_ENV === 'development'){
     app.use(logger('dev'));
-    app.use(errorHandler())
+    // app.use(errorHandler())
 }
 
 
