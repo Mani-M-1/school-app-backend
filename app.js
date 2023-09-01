@@ -34,7 +34,7 @@ const mongoose = require('mongoose');
 // const WeeklyCourseRoutes = require('./routes/WeeklyCourse');
 // const userSignupRoutes = require('./routes/Signup');
 // const sendNotificationsRoutes = require('./routes/sendNotifications');
-// const todoRoutes = require('./routes/todo');
+const todoRoutes = require('./routes/todo');
 const blogRoutes = require('./routes/blog');
 // const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
@@ -220,7 +220,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use('/weeklyCourse', WeeklyCourseRoutes);
 // app.use('/Signup', userSignupRoutes);
 // app.use('/notifications', sendNotificationsRoutes);
-// app.use('/todo', todoRoutes);
+app.use('/todo', todoRoutes);
 app.use('/blog', blogRoutes);
 
 // For error handling
