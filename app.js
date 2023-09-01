@@ -31,7 +31,7 @@ const mongoose = require('mongoose');
 
 // // importing courses router in app from router folder
 // const coursesRoutes = require('./routes/courses');
-// const WeeklyCourseRoutes = require('./routes/WeeklyCourse');
+const WeeklyCourseRoutes = require('./routes/WeeklyCourse');
 const userSignupRoutes = require('./routes/Signup');
 // const sendNotificationsRoutes = require('./routes/sendNotifications');
 const todoRoutes = require('./routes/todo');
@@ -217,7 +217,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // //if you create anothor route mension here 
 
 // app.use('/courses', coursesRoutes);
-// app.use('/weeklyCourse', WeeklyCourseRoutes);
+app.use('/weeklyCourse', WeeklyCourseRoutes);
 app.use('/Signup', userSignupRoutes);
 // app.use('/notifications', sendNotificationsRoutes);
 app.use('/todo', todoRoutes);
