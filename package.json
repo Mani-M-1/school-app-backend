@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/cyclic-software/starter-express-api#readme",
   "dependencies": {
+    "@onesignal/node-onesignal": "^2.0.1-beta2",
+    "api": "^6.1.1",
     "body-parser": "^1.20.2",
     "express": "^4.17.1",
     "jsonwebtoken": "^9.0.2",
