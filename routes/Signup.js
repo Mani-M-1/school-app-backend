@@ -46,7 +46,8 @@ router.post('/', (req, res, next)=>{
         lastName: req.body.lastName,
         role: req.body.role,
         school: req.body.school,
-        emergency: req.body.emergency
+        emergency: req.body.emergency,
+        profile: req.body.profile
 
            });
 
@@ -283,6 +284,7 @@ router.get('/:username', (req, res, next) =>{
             mobileno: doc.mobileNo,
             school: doc.school,
             emergency: doc.emergency,
+            profile: doc.profile
             //address: doc.address
            });
  
@@ -372,6 +374,7 @@ router.put('/:username', (req, res, next) => {
         lastName: updatedDoc.lastName,
         mobileNo: updatedDoc.mobileNo,
         emergency: updatedDoc.emergency,
+        profile: updatedDoc.profile
       });
     })
     .catch(err => {

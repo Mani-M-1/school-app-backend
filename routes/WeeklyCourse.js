@@ -301,6 +301,9 @@ router.post('/updateWeek/:id', (req, res, next) => {
     const update = {
       _id: new mongoose.Types.ObjectId(),
       week: req.body.week,
+      courseVideo: req.body.courseVideo,
+      vodeoLink: req.body.vodeoLink,
+      pdf: req.body.pdf,
       readingmeterial: req.body.readingmeterial,
       assignment: req.body.assignment,
       additionalContent: req.body.additionalContent,
