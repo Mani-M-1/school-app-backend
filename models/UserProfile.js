@@ -26,7 +26,7 @@ const UserProfileSchema = mongoose.Schema({
    role: {type:String, required: true},
    school: {type: String, required: true},
    emergency: { type: Number, required: true},
-   profile: { type: String, }
+   profile: { type: String }
 });
 
 
