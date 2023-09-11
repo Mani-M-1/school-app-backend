@@ -152,10 +152,10 @@ app.post('/uploadfile', (req, res) => {
 
 //  const filename= '/Users/rahulrajput/Desktop/video/DJI_0030.MP4';
 
-const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
+// const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
 
  
-  const fileContent = fs.createReadStream(filename);
+  // const fileContent = fs.createReadStream(filename);
   //console.log(fileContent);
   const params = {
     Bucket: "student-corner",

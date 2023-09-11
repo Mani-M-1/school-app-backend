@@ -218,10 +218,13 @@ router.post('/', async (req, res, next) => {
 //api to add new weekly course
 
 router.post('/addWeek', (req, res, next) =>{
+  console.log(req.body.week);
     const addWeek = {
         _id: new mongoose.Types.ObjectId(),
         week: req.body.week,
+        courseVideo: req.body.courseVideo,
         vodeoLink: req.body.vodeoLink,
+        pdf: req.body.pdf,
         readingmeterial: req.body.readingmeterial,
         assignment: req.body.assignment,
         additionalContent: req.body.additionalContent,

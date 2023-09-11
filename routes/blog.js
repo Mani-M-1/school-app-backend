@@ -225,6 +225,50 @@ router.put('/:id', (req, res) => {
     })
 
   });
+
+  //like router for blogs
+ // Assuming you have the necessary imports and route setup here
+
+  router.post('/like', async (req, res, next) => {
+    const blogId = req.body.blogId;
+    const username = req.body.username;
+
+    try {
+      const blog = await Blog.findById(blogId);
+
+      if (!blog) {
+        return res.status(404).json({ message: 'Blog not found' });
+      }
+
+      const userIndex = blog.likedBy.indexOf(username);
+
+      if (userIndex !== -1) {
+        // User has already liked the blog, so undo the like
+        blog.likes -= 1;
+        blog.likedBy.splice(userIndex, 1); // Remove the user from likedBy array
+      } else {
+        // User has not liked the blog, so add the like
+        blog.likes += 1;
+        blog.likedBy.push(username);
+      }
+
+      // Save the updated blog
+      const updatedBlog = await blog.save();
+
+      res.status(200).json({
+        message: 'Blog like updated successfully',
+        updatedBlog: updatedBlog,
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({
+        error: err,
+      });
+    }
+  });
+
+
+
   
 
   
