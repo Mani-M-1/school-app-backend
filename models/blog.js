@@ -28,7 +28,7 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   username: { type: String, required: true },
-  comment: { type: String, required: false },
+  comment: { type: String },
   timestamp: { type: Date, default: Date.now },
 });
 
@@ -41,7 +41,7 @@ const BlogSchema = new mongoose.Schema({
   images: { type: [String], default: [] },
   timestamp: { type: Date, default: Date.now },
   likes: { type: Number, default: 0 }, // Number of likes for the blog
-  comments: { type: [commentSchema], require: false },
+  comments: { type: [commentSchema] },
   likedBy: [{ type: String }], // Array to store usernames of users who liked the blog
 });
 

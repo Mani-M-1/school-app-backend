@@ -63,14 +63,15 @@ router.get('/:userName', (req, res, next) => {
 
 
     const blog = new blogModel({
-      _id: mongoose.Types.ObjectId(),
+      _id: new mongoose.Types.ObjectId(),
       title: req.body.title,
       username: req.body.username,
       content: req.body.content,
       Name: req.body.Name,
       images: req.body.images,
       timeStamp: new Date(), // add the current date and time
-      comments: commentData
+      // comments: commentData
+      comments: req.body.comments
     });
 
     // save the new blog to the database
@@ -232,7 +233,8 @@ router.put('/:id', (req, res) => {
   router.post('/like', async (req, res, next) => {
     const blogId = req.body.blogId;
     const username = req.body.username;
-
+// here we need pu action : it should like and unlike
+//i need to write it in schema
     try {
       const blog = await Blog.findById(blogId);
 
