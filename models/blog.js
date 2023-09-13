@@ -35,7 +35,7 @@ const commentSchema = new mongoose.Schema({
 const BlogSchema = new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
   title: { type: String, required: true },
-  username: { type: String, required: false },
+  username: { type: String, required: true },
   content: { type: String, required: true },
   Name: { type: String, required: true },
   images: { type: [String], default: [] },
