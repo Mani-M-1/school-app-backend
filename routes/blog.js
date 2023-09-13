@@ -61,6 +61,7 @@ router.get('/:userName', (req, res, next) => {
     //     timeStamp: new Date()  
     //     }
 
+    console.log(JSON.stringify(req.body) + "this is req.body incomming");
 
     const blog = new blogModel({
       _id: new mongoose.Types.ObjectId(),

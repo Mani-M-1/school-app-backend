@@ -38,7 +38,8 @@ const BlogSchema = new mongoose.Schema({
   username: { type: String, required: true },
   content: { type: String, required: true },
   Name: { type: String, required: true },
-  images: { type: [String], default: [] },
+  // images: { type: [String], default: [] },
+  images: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
   likes: { type: Number, default: 0 }, // Number of likes for the blog
   comments: { type: [commentSchema] },
