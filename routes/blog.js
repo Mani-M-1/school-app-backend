@@ -87,6 +87,7 @@ router.get('/:userName', (req, res, next) => {
           username: result.username,
           content: result.content,
           Name: result.Name,
+          images: result.images,
           _id: result._id,
           timestamp: result.timestamp // Include the timestamp in the response
         }
