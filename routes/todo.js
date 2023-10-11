@@ -85,7 +85,7 @@ router.get('/:username', (req, res, next) => {
 //post router
 router.post('/', (req, res, next) => {
     const todo = new todomodel({
-       _id: mongoose.Types.ObjectId(),
+       _id: new mongoose.Types.ObjectId,
         username: req.body.username,
         task: req.body.task,
         priority: req.body.priority,
@@ -174,7 +174,7 @@ router.post('/:todoId', (req, res, next) => {
   });
 
   router.delete('/:todoId', (req, res, next) =>{ 
-    todomodel.remove({_id: req.params.todoId })
+    todomodel.findByIdAndRemove({_id: req.params.todoId })
     .exec()
     .then(result => {
      res.status(200).json({

@@ -12,4 +12,4 @@ const todoSchema = mongoose.Schema({
 });
 // this task,priority,date,category are called data
 
-module.exports = mongoose.model('todo', todoSchema);
+module.exports = mongoose.model('todomodel', todoSchema);
