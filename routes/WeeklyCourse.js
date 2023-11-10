@@ -138,7 +138,7 @@ router.post('/', async (req, res, next) => {
       videoLink: req.body.CourseContent.videoLink,
       pdf : req.body.CourseContent.pdf,
       readingmeterial: req.body.CourseContent.readingmeterial,
-      assignment: req.body.CourseContent.readingmeterial,
+      assignment: req.body.CourseContent.assignment,
       additionalContent: req.body.CourseContent.additionalContent,
       announcement: req.body.CourseContent.announcement,
       startDate: req.body.CourseContent.startDate,
