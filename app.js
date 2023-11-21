@@ -8,6 +8,8 @@ const cors = require('cors');
 const AWS = require('aws-sdk');
 const fs = require('fs');
 const fileRead= require('express-fileupload');
+
+
 //for hiding secret keys in .env file so no one can access
 // dotenv = require('dotenv');
 
@@ -37,6 +39,11 @@ const userSignupRoutes = require('./routes/Signup');
 const sendNotificationsRoutes = require('./routes/sendNotifications');
 const todoRoutes = require('./routes/todo');
 const blogRoutes = require('./routes/blog');
+
+//sravans code 
+const addingProfessorsRoutes = require('./api/routes/addingProfessors')
+const addingStudentsRoutes = require('./api/routes/addingStudents');
+const { callbackPromise } = require('nodemailer/lib/shared');
 // const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
 
@@ -225,6 +232,10 @@ app.use('/Signup', userSignupRoutes);
 app.use('/notifications', sendNotificationsRoutes);
 app.use('/todo', todoRoutes);
 app.use('/blog', blogRoutes);
+
+//sravans routes
+app.use('/addingProfessors', addingProfessorsRoutes)
+app.use('/addingStudents', addingStudentsRoutes)
 
 // For error handling
 app.use((req, res, next) => {
