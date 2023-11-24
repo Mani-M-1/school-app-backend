@@ -37,6 +37,7 @@ const userSignupRoutes = require('./routes/Signup');
 const sendNotificationsRoutes = require('./routes/sendNotifications');
 const todoRoutes = require('./routes/todo');
 const blogRoutes = require('./routes/blog');
+const courEnrollRoutes = require('./routes/courseEnrollment');
 // const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
 
@@ -225,6 +226,7 @@ app.use('/Signup', userSignupRoutes);
 app.use('/notifications', sendNotificationsRoutes);
 app.use('/todo', todoRoutes);
 app.use('/blog', blogRoutes);
+app.use('/enrollCourse', courEnrollRoutes);
 
 // For error handling
 app.use((req, res, next) => {

@@ -48,7 +48,6 @@ router.post('/', (req, res, next)=>{
         school: req.body.school,
         emergency: req.body.emergency,
         profile: req.body.profile
-
            });
 
      var username = req.body.username;
@@ -284,7 +283,9 @@ router.get('/:username', (req, res, next) =>{
             mobileno: doc.mobileNo,
             school: doc.school,
             emergency: doc.emergency,
-            profile: doc.profile
+            profile: doc.profile,
+            data: doc
+
             //address: doc.address
            });
  
