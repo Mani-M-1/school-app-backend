@@ -2,7 +2,6 @@ const express = require('express');
 // const multer = require('multer');
 const router = express.Router();
 const mongoose = require('mongoose');
-const StudentModel = require('../models/addingStudent');  // Assuming your schema is in a separate file
 const nodemailer = require('nodemailer');
 // const upload = multer({ dest: 'uploads/' }); // Define the destination folder for uploaded files
 // Load the AWS SDK
@@ -11,6 +10,10 @@ const fs =require('fs');
 const fileRead= require('express-fileupload');
 // var multer = require('multer');
 var os = require('os');
+
+// importing required models
+const StudentModel = require('../models/addingStudent');  // Assuming your schema is in a separate file
+const userProfile = require('../models/UserProfile');
 
 // GET all student
 router.get('/student', async (req, res) => {
@@ -36,48 +39,100 @@ router.get('/student/:id', async (req, res) => {
     }
   });
 
-// POST create a new student
-router.post('/student', (req, res, next) => {
-  console.log(req.body);
-    const Student = new StudentModel({
-        _id: mongoose.Types.ObjectId(),
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        gender: req.body.gender,
-        yearOfStudy: req.body.yearOfStudy,
-        images: req.body.images,
-        group: req.body.group,
-        email: req.body.email,
-        password: req.body.password,
-        mobileNumber: req.body.mobileNumber,
-        address: req.body.address,
-        schoolname: req.body.schoolname,
-        schoolcode: req.body.schoolcode,
-    });
+// // POST create a new student
+// router.post('/student', (req, res, next) => {
+//   // console.log(req.body);
 
-    Student
-    .save() 
-    .then(result => {
-        res.status(201).json({
-            message: 'student created successfully',
-            createdStudent: {
-                firstName: result.firstName,
-                lastName: result.lastName,
-                gender: result.gender,
-                images: result.images,
-                yearOfStudy: result.yearOfStudy,
-                group: result.group,
-                email: result.email,
-                password: result.password,
-                mobileNumber: result.mobileNumber,
-                address: result.address,
-                schoolname: result.schoolname,
-                schoolcode: result.schoolcode,
-                _id: result._id
-            }
-        });
-    });
-});
+ 
+//   const Student = new StudentModel(req.body) //this was written by "manikanta"
+//     // const Student = new StudentModel({
+//     //     _id: mongoose.Types.ObjectId(),
+//     //     firstName: req.body.firstName,
+//     //     lastName: req.body.lastName,
+//     //     gender: req.body.gender,
+//     //     yearOfStudy: req.body.yearOfStudy,
+//     //     images: req.body.images,
+//     //     group: req.body.group,
+//     //     email: req.body.email,
+//     //     password: req.body.password,
+//     //     mobileNumber: req.body.mobileNumber,
+//     //     address: req.body.address,
+//     //     schoolname: req.body.schoolname,
+//     //     schoolcode: req.body.schoolcode,
+//     // });
+
+//     Student
+//     .save() 
+//     .then(result => {
+//       console.log(result)
+//         res.status(201).json({
+//             message: 'student created successfully',
+//             createdStudent: {
+//                 firstName: result.firstName,
+//                 lastName: result.lastName,
+//                 gender: result.gender,
+//                 images: result.images,
+//                 yearOfStudy: result.yearOfStudy,
+//                 group: result.group,
+//                 email: result.email,
+//                 password: result.password,
+//                 mobileNumber: result.mobileNumber,
+//                 address: result.address,
+//                 schoolname: result.schoolname,
+//                 schoolcode: result.schoolcode,
+//                 _id: result._id
+//             }
+//         });
+//     })
+//     .catch(error => {
+//       console.log("error.message")
+//       res.status(500).json({ error: error.message });
+//   });
+// });
+
+
+//adding student {created by: "manikanta"}
+router.post('/student', async (req, res) => {
+  try {
+    const student = new StudentModel(req.body) // adding student 
+    await student.save();
+    console.log(student)
+    
+    
+    // creating student profile 
+    const studentProfile = new userProfile({
+      _id: new mongoose.Types.ObjectId(),
+      username: req.body.email, // email is used for "username" field to create profile
+      password: req.body.password,
+      mobileNo: req.body.mobileNumber,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      role: "student",
+      school: req.body.schoolname,
+      emergency: req.body.mobileNumber,
+    }) 
+    
+    // await studentProfile.save()
+    // console.log(studentProfile)
+    
+    try {
+      await studentProfile.save();
+      console.log(studentProfile)
+    } catch (err) {
+      // Handle the error related to saving userProfile
+      console.error("Error saving userProfile:", err);
+      throw err; // Re-throw the error to be caught by the outer catch block
+    }
+
+    res.status(200).json({
+      message: 'student created successfully',
+      createdStudent: student,
+      studentProfile
+    })
+  } catch (err) {
+    res.status(500).json({err_msg: "An API Error occured while adding student"});
+  }
+})
 
 
 // PUT update a student
@@ -97,7 +152,7 @@ router.post('/student', (req, res, next) => {
 // PUT update student by ID
 router.put('/student/:id', (req, res, next) => {
   const studentId = req.params.id;
-console.log(req.body);
+// console.log(req.body);
   // Find the student by ID and update their information
   StudentModel.findByIdAndUpdate(studentId, {
       firstName: req.body.firstName,
@@ -236,7 +291,7 @@ router.put('/update-password', async (req, res) => {
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
-    console.log(student)
+    // console.log(student)
     // Check if the current password matches
     if (student.password !== currentPassword) {
       return res.status(400).json({ message: 'Current password is incorrect' });
@@ -267,10 +322,10 @@ const s3 = new AWS.S3({
 
 //  const filename= '/Users/rahulrajput/Desktop/video/DJI_0030.MP4';
 
-const filename= '/Users/rahul/Pictures/Screenshots/Screenshot (83).png';
+// const filename= '/Users/rahul/Pictures/Screenshots/Screenshot (83).png';
 
 
-const fileContent = fs.createReadStream(filename);
+// const fileContent = fs.createReadStream(filename);
 //console.log(fileContent);
 const params = {
   Bucket: 'student-corner',
@@ -278,9 +333,10 @@ const params = {
   Body: req.files.filename.data
 }
 
+
 s3.upload(params, (err, data) => {
   if (err) {
-      console.log(err);
+      // console.log(err);
     reject(err)
   }
  
@@ -302,46 +358,46 @@ s3.upload(params, (err, data) => {
 // Block a student
 router.post('/block/:id', async (req, res) => {
   const { id } = req.params;
-  console.log(id)
+  // console.log(id)
 
   try {
     const student = await StudentModel.findByIdAndUpdate(
       id,
       { status: 'blocked' },
       { new: true }
-      );
+    );
 
-      if (!student) {
-        return res.status(404).json({ error: 'Student not found' });
-      }
-  
-      return res.json({ message: 'Student blocked successfully', student });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Internal server error' });
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
     }
-  });
+
+    return res.json({ message: 'Student blocked successfully', student });
+  } catch (error) {
+    // console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Unblock a student
 router.post('/unblock/:id', async (req, res) => {
-  const { id } = req.params;
+const { id } = req.params;
 
   try {
     const student = await StudentModel.findByIdAndUpdate(
       id,
       { status: 'active' },
       { new: true }
-      );
+    );
 
-      if (!student) {
-        return res.status(404).json({ error: 'Student not found' });
-      }
-  
-      return res.json({ message: 'Student unblocked successfully', student });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Internal server error' });
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
     }
-  });
+
+    return res.json({ message: 'Student unblocked successfully', student });
+  } catch (error) {
+    // console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 module.exports = router; 

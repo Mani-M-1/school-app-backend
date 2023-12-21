@@ -3,6 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const ProfessorModel = require('../models/addingProfessor');
 const nodemailer = require('nodemailer');
+const AWS = require('aws-sdk');
+
 
 
 // GET all professors
@@ -15,26 +17,26 @@ router.get('/professors', async (req, res) => {
     }
   });
   
-  // GET one professor
-  router.get('/professors/:id', async (req, res) => {
-    try {
-      const professor = await ProfessorModel.findById(req.params.id);
-      if (professor) {
-        res.json(professor);
-      } else {
-        res.status(404).json({ message: 'Professor not found' });
-      }
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+// GET one professor
+router.get('/professors/:id', async (req, res) => {
+  try {
+    const professor = await ProfessorModel.findById(req.params.id);
+    if (professor) {
+      res.json(professor);
+    } else {
+      res.status(404).json({ message: 'Professor not found' });
     }
-  });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
   
   
 
 // POST create a new professor
 router.post('/professors', (req, res, next) => {
     const professor = new ProfessorModel({
-      _id: mongoose.Types.ObjectId(),
+      // _id: mongoose.Types.ObjectId(),
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       gender: req.body.gender,
@@ -150,12 +152,12 @@ router.put('/update-password', async (req, res) => {
   try {
     const professor = await ProfessorModel.findOne({ email });
 
-   console.log(professor)
+  //  console.log(professor)
 
     if (!professor) {
       return res.status(404).json({ message: 'Professor not found' });
     }
-    console.log(professor)
+    // console.log(professor)
 
     // Check if the current password matches
     if (professor.password !== currentPassword) {
@@ -168,7 +170,7 @@ router.put('/update-password', async (req, res) => {
 
     return res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -178,6 +180,9 @@ router.put('/update-password', async (req, res) => {
 router.post('/uploadfiles', (req, res) => {
   
   console.log(req.files.filename);
+
+  // const uploadedFile = req.file;
+  // console.log(uploadedFile);
   
 
 const s3 = new AWS.S3({
@@ -187,14 +192,14 @@ const s3 = new AWS.S3({
 
 //  const filename= '/Users/rahulrajput/Desktop/video/DJI_0030.MP4';
 
-const filename= '/Users/rahul/Pictures/Screenshots/Screenshot (83).png';
+// const filename= '/Users/rahul/Pictures/Screenshots/Screenshot (83).png';
 
 
-const fileContent = fs.createReadStream(filename);
+// const fileContent = fs.createReadStream(filename);
 //console.log(fileContent);
 const params = {
   Bucket: 'student-corner',
-  Key:req.files.filename.name,
+  Key: req.files.filename.name,
   Body: req.files.filename.data
 }
 

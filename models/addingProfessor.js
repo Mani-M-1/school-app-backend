@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const ProfessorSchema = new mongoose.Schema({
+  //professorId: 
   firstName: { type: String },
   lastName: { type: String },
   gender: {

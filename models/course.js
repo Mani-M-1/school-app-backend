@@ -6,5 +6,6 @@ const courseSchema = mongoose.Schema({
     ProfessorName: String,
     CourseDiscription: String,
     CourseBook: String
+    // isCompleted: Boolean => we should include this to know whether a user completed the course or not
 });
 module.exports = mongoose.model('Course', courseSchema);

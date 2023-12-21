@@ -32,57 +32,51 @@ const UserSignup = require('../models/UserProfile');
 // upload.single('profileImage'),
 
 router.post('/', (req, res, next)=>{
-    console.log(req.file);
-    console.log("User profile is called")
-    console.log(req.body.username);
-    console.log(req.body)
     const userSignup = new UserSignup({
-        _id: new mongoose.Types.ObjectId,
-        username: req.body.username,
-        password: req.body.password,
-        mobileNo: req.body.mobileNo,
-        //address:  req.body.address,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        role: req.body.role,
-        school: req.body.school,
-        emergency: req.body.emergency,
-        profile: req.body.profile
-           });
+      _id: new mongoose.Types.ObjectId,
+      username: req.body.username,
+      password: req.body.password,
+      mobileNo: req.body.mobileNo,
+      //address:  req.body.address,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      role: req.body.role,
+      school: req.body.school,
+      emergency: req.body.emergency,
+      profile: req.body.profile
+    });
 
      var username = req.body.username;
-  //first check if user is alredy existed 
-  UserSignup.findOne({username:username}).select().exec().then(doc =>{
+
+    //first check if user is alredy existed 
+    UserSignup.findOne({username:username}).select().exec().then(doc =>{
       
 
   
      
     if(doc == null){
 
-        userSignup.save().then( result=> {
-            console.log(result);
-
-            res.status(200).json({
-               message: "User signed up susccessfully",
-               status:"success",
-               Id: result._id,
-               userData: result
-            });
+      userSignup.save()
+      .then( result=> {
+        res.status(200).json({
+            message: "User signed up susccessfully",
+            status:"success",
+            Id: result._id,
+            userData: result
+        });
   
-     }) .catch(err => {
-        console.log(err);
+      }) 
+      .catch(err => {
         res.status(500).json({
-             error: err
-              });
-         })
+          error: err
+        });
+      })
 
     }else{
-      
-        res.status(200).json({message:"user aleredy exists",
-                              status:"failed"
-    
-                             })
-
+        res.status(200).json({
+          message:"user already exists",
+          status:"failed"
+        })
     }
     
 /*

@@ -42,8 +42,8 @@ const blogRoutes = require('./routes/blog');
 const courEnrollRoutes = require('./routes/courseEnrollment');
 
 //sravans code 
-const addingProfessorsRoutes = require('./api/routes/addingProfessors')
-const addingStudentsRoutes = require('./api/routes/addingStudents');
+const addingProfessorsRoutes = require('./routes/addingProfessor')
+const addingStudentsRoutes = require('./routes/addingStudent');
 const { callbackPromise } = require('nodemailer/lib/shared');
 // const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
