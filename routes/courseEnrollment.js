@@ -17,7 +17,7 @@ router.post('/enrollCourses', (req, res, next) => {
      //find by the student Id and push the object to the student profile array
     UserSignup.updateOne({ _id: req.body.StudentId},
         { 
-            $addToSet: { enrolledCourses: {CourseId: req.body.CourseId, CourseName: req.body.CourseName, isCompleted: false}}}) // "isChecked" is used to represent the "checkboxes ticked" in ionic 
+            $addToSet: { enrolledCourses: {CourseId: req.body.CourseId, CourseName: req.body.CourseName, isChecked: false,isCompleted: false}}}) // "isChecked" is used to represent the "checkboxes ticked" in ionic 
             .exec()
             .then(updatedData =>{
             res.status(200).json({

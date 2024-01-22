@@ -83,11 +83,11 @@ router.get('/', (req, res, next) => {
    WeeklyCourse.find()
     .exec()
     .then( docs => {
-        console.log(docs);
+        // console.log(docs);
         res.status(200).json(docs);
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({
             error: err
         });
@@ -100,11 +100,11 @@ router.get('/:userName', (req, res, next) => {
   WeeklyCourse.find({username: req.params.userName})
    .exec()
    .then( docs => {
-       console.log(docs);
+      //  console.log(docs);
        res.status(200).json(docs);
    })
    .catch(err => {
-       console.log(err);
+      //  console.log(err);
        res.status(500).json({
            error: err
        });
@@ -129,7 +129,7 @@ router.post('/', async (req, res, next) => {
  // console.log(req.CourseImage);
   //res.send('File uploaded successfully!');
   // console.log(req.body.CourseContent);
-  console.log(JSON.stringify(req.body) + "this is req.body incomming");
+  // console.log(JSON.stringify(req.body) + "this is req.body incomming");
   try {
     var CourseContentdata = { 
       _id: new mongoose.Types.ObjectId(),
@@ -161,7 +161,7 @@ router.post('/', async (req, res, next) => {
 
     w_course.save()
       .then(result => {
-        console.log(result + "this is the result");
+        // console.log(result + "this is the result");
         res.status(201).json({
           message: 'Handling POST requests to /Weeklycourse',
           courseCreated: result
@@ -169,13 +169,13 @@ router.post('/', async (req, res, next) => {
       })
       
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({
           error: err
         });
       });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).json({
       error: 'Failed to upload image'
     });
@@ -218,7 +218,7 @@ router.post('/', async (req, res, next) => {
 //api to add new weekly course
 
 router.post('/addWeek', (req, res, next) =>{
-  console.log(req.body.week);
+  // console.log(req.body.week);
     const addWeek = {
         _id: new mongoose.Types.ObjectId(),
         week: req.body.week,
@@ -234,11 +234,11 @@ router.post('/addWeek', (req, res, next) =>{
 
         
     }
-    console.log(req.body.week);
+    // console.log(req.body.week);
     //form the query to push new into existing data
     var query = {$push: {CourseContent: addWeek}}
-    console.log(req.body._id);
-    console.log(addWeek)
+    // console.log(req.body._id);
+    // console.log(addWeek)
     //now find exiting course by it's doucument Id and push the data
 
     WeeklyCourse.findByIdAndUpdate({_id: req.body._id}, query)
@@ -296,27 +296,30 @@ router.post('/addWeek', (req, res, next) =>{
 
 //put method is working
 
-router.post('/updateWeek/:id', (req, res, next) => {
-    const weekId = req.params.id;
-    const update = {
-      _id: new mongoose.Types.ObjectId(),
-      week: req.body.week,
-      courseVideo: req.body.courseVideo,
-      vodeoLink: req.body.vodeoLink,
-      pdf: req.body.pdf,
-      readingmeterial: req.body.readingmeterial,
-      assignment: req.body.assignment,
-      additionalContent: req.body.additionalContent,
-      announcement: req.body.announcement,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate
-    };
-    WeeklyCourse.findOneAndUpdate(
-      { "CourseContent._id": weekId },
-      { $set: { "CourseContent.$": update } },
+router.put('/updateWeeklyCourse/:weeklyId', (req, res, next) => { // modified by "manikanta"
+    const {weeklyId} = req.params;
+
+
+  
+    // const update = {
+    //   week: req.body.week,
+    //   courseVideo: req.body.courseVideo,
+    //   videoLink: req.body.videoLink,
+    //   pdf: req.body.pdf,
+    //   readingmeterial: req.body.readingmeterial,
+    //   assignment: req.body.assignment,
+    //   additionalContent: req.body.additionalContent,
+    //   announcement: req.body.announcement,
+    //   startDate: req.body.startDate,
+    //   endDate: req.body.endDate
+    // };
+    WeeklyCourse.updateOne(
+      { "CourseContent._id": weeklyId },
+      // { $set: { "CourseContent.$": update } },
+      { $set: { "CourseContent.$": req.body } }, // written by "manikanta"
       { new: true }
     )
-    .select()
+    // .select()
     .exec()
     .then(updatedDoc => {
       if (updatedDoc) {
@@ -368,14 +371,14 @@ router.post('/updateWeek/:id', (req, res, next) => {
 //       });
 //   });
 
-router.delete('/deleteWeek/:weekId', (req, res, next) => {
-  const  weekId = req.params.weekId;
-  console.log(weekId)
-  const convertedId = mongoose.Types.ObjectId(weekId);
+router.delete('/deleteWeeklyCourse/:weekId/:courseId', (req, res, next) => {
+  const  {weekId, courseId} = req.params;
+  // console.log(weekId, courseId)
+  // const convertedId = new mongoose.Types.ObjectId(weekId);
 
   WeeklyCourse.updateOne(
-    { "CourseContent._id": convertedId },
-    { $pull: { CourseContent: { _id: convertedId } } },
+    { _id: courseId },  // modified by "manikanta"
+    { $pull: { CourseContent: { _id: weekId } } },
     { new: true }
   )
     .exec()
@@ -392,7 +395,7 @@ router.delete('/deleteWeek/:weekId', (req, res, next) => {
       }
     })
     .catch((err) => {
-      console.error(err);
+      // console.error(err);
       res.status(500).json({
         message: 'Server Error',
         error: err,
@@ -401,12 +404,13 @@ router.delete('/deleteWeek/:weekId', (req, res, next) => {
 });
   
   //to get single course with ID
-router.get('/:w_courseId',(req, res, next) => {
-    const id = req.params.w_courseId;
+router.get('/getCourse/:w_courseId',(req, res, next) => {
+  const id = req.params.w_courseId;
+  console.log(id)
    WeeklyCourse.findById(id)
     .exec()
     .then(doc => {
-        console.log("From database", doc);
+        // console.log("From database", doc);
         if (doc) {
             res.status(200).json(doc);
         } else {
@@ -414,12 +418,12 @@ router.get('/:w_courseId',(req, res, next) => {
         }
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({error: err});
     });
 });    
  
-router.patch('/:w_courseId',(req, res, next) => {
+router.patch('/updateCourse/:w_courseId',(req, res, next) => {
    const id = req.params.w_courseId;
    const updateOps = {};
    for (const ops of req.body) {
@@ -428,11 +432,11 @@ router.patch('/:w_courseId',(req, res, next) => {
    WeeklyCourse.updateMany({ _id: id }, { $set: updateOps }) 
     .exec()
     .then( result => {
-        console.log(result);
+        // console.log(result);
         res.status(200).json(result);
     })
     .catch(err => {
-        console.log(err);
+        // console.log(err);
         res.status(500).json({
             error: err
         });
@@ -440,15 +444,15 @@ router.patch('/:w_courseId',(req, res, next) => {
 
 });
 
-router.delete('/:w_courseId',(req, res, next) => {
+router.delete('/deleteCourse/:w_courseId',(req, res, next) => {
     const id = req.params.w_courseId;
-    WeeklyCourse.remove({ _id: id })
+    WeeklyCourse.deleteOne({ _id: id })
         .exec()
         .then( result => {
             res.status(200).json({massage: "Course deleted"});
         })
         .catch(err => {
-            console.log(err);
+            // console.log(err);
             res.status(500).json({
                 error: err
             });
@@ -460,9 +464,9 @@ router.delete('/:w_courseId',(req, res, next) => {
 
 router.post('/Uploadfile', (req, res) => {
   
-  console.log("upload file triggered")
+  // console.log("upload file triggered")
     // console.log(req.files.filename);
-    console.log(req.files.filename.name)
+    // console.log(req.files.filename.name)
   
   const s3 = new AWS.S3({
     accessKeyId:"AKIAZ74FJQGL523L7WFP",
@@ -484,7 +488,7 @@ const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
   
   s3.upload(params, (err, data) => {
     if (err) {
-        console.log(err);
+        // console.log(err);
       reject(err)
     }
 
@@ -494,10 +498,10 @@ const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
 
 
 
-
-
-
-
 })
+
+
+
+
 
 module.exports = router;

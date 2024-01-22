@@ -105,12 +105,15 @@ router.put('/professors/:id', async (req, res) => {
   
   // Search endpoint
 router.get("/search/:key",async (req,res) => { 
+  // Use a regular expression for case-insensitive search
+  const regex = new RegExp(req.params.key, 'i');
+
   let data = await ProfessorModel.find(
       {
           "$or":[
-              {firstName:{$regex:req.params.key}},
-              {lastName:{$regex:req.params.key}},
-              {subjects:{$regex:req.params.key}}
+              {firstName:regex},
+              {lastName:regex},
+              {subjects:regex}
           ]
       }
   )

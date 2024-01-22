@@ -212,11 +212,14 @@ router.delete('/student/:id', async (req, res) => {
 
 // Search endpoint
 router.get("/search/:key",async (req,res) => { 
+  // Use a regular expression for case-insensitive search
+  const regex = new RegExp(req.params.key, 'i');
+
   let data = await StudentModel.find(
       {
           "$or":[
-              {firstName:{$regex:req.params.key}},
-              {lastName:{$regex:req.params.key}}
+              {firstName: regex},
+              {lastName: regex}
           ]
       }
   )
@@ -225,11 +228,27 @@ router.get("/search/:key",async (req,res) => {
 
 // Create a POST route to send an email
 router.post('/send-email', (req, res) => {
+  // console.log(req.body)
+
+  let user = req.body.toEmail.split("@")[0] 
+
+  const output = `
+        <h3>Hi ${user}</h3>
+        <p> You have a request from ssdsorg@gmail.com through School Corner App</p>
+        <h4>Your Details are given below </h4>
+        <ul style="padding: 0;"> 
+          <li style="list-style: none;"> Email: ${req.body.toEmail} </li>
+          <li style="list-style: none;"> Password: ${req.body.text} </li>
+        </ul>
+        <p> Please click <a href='${process.env.FRONTEND_URL}/signin'>here</a> to enter the School Corner application</p> 
+  `
   const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
-          user: "smartsquard1234@gmail.com",
-          pass: "bdgnfmzfemlsmsob"
+          user: "ssdsorg@gmail.com",
+          pass: "lzhvxwjwxljznhed"
+          // user: "smartsquard1234@gmail.com",
+          // pass: "bdgnfmzfemlsmsob"
       }
   });
 
@@ -237,7 +256,8 @@ router.post('/send-email', (req, res) => {
       from: "smartsquard1234@gmail.com",
       to: req.body.toEmail,
       subject: req.body.subject,
-      text: req.body.text
+      text: "Hello World!",
+      html : output
   };
 
   transporter.sendMail(options, (err, info) => {
