@@ -9,6 +9,10 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const fileRead= require('express-fileupload');
 
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 
 //for hiding secret keys in .env file so no one can access
 // dotenv = require('dotenv');

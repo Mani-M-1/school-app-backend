@@ -4,82 +4,116 @@ const router = express.Router();
 const sdk = require('api')('@onesignal/v9.0#7bax30lfo8ah5k');
 const OneSignal = require('@onesignal/node-onesignal');
 
-router.post('/sendNotification', async (req, res, next)=> { 
-    console.log("hello");
+
+
+
+//this router for sending notifications to all subscribed devices
+router.post('/sendNotifications/allUsers', async (req, res, next) => {
+    console.log(req.body.message)
+    
+    const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID; 
+        
+    const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
+
+    const app_key_provider = {
+      getToken() {
+        return ONESIGNAL_API_KEY;
+      },
+    };
+  
+    const configuration = OneSignal.createConfiguration({
+      authMethods: {
+        app_key: {
+          tokenProvider: app_key_provider,
+        },
+      },
+    });
+  
+    const client = new OneSignal.DefaultApi(configuration);
+  
+    const notification = new OneSignal.Notification();
+    notification.app_id = ONESIGNAL_APP_ID;
+    notification.included_segments = ['Total Subscriptions'];
+    notification.headings = { en: 'My Notification' };
+    notification.contents = { en: req.body.message };
+  
+    try {
+      const response = await client.createNotification(notification);
+      res.json(response);
+    } catch (error) {
+  
+      if (error.body && error.body.errors && error.body.errors.length > 0) {
+        console.error('OneSignal Error:', error.body.errors[0].message);
+      }
+  
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
+  //this router for sending notification to specific device using player Ids
+router.post('/sendNotifications/specificUsers', async (req, res, next)=> {
+    console.log(req.body.message)
+
+    const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID; 
+        
+    const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
+
+    const app_key_provider = {
+        getToken(){
+            return ONESIGNAL_API_KEY;
+        
+        },
+        
+    };
+    const configuration = OneSignal.createConfiguration({
+        authMethods: {
+            app_key: {
+                tokenProvider: app_key_provider
+            },
+        
+        },
+    });
+    const client = new OneSignal.DefaultApi(configuration);
+
+    const notification = new OneSignal.Notification();
+    notification.app_id = ONESIGNAL_APP_ID;
+    
+    // getting all the users who installed the application
+    const players = await client.getPlayers(ONESIGNAL_APP_ID);
+    console.log(players.players);
+
+    const playerIdArr = players.players.map(player => player.id); // returning only id's of all the players 
+    console.log(playerIdArr);
+
+    notification.include_player_ids = [playerIdArr[1]]; // providing multiple "subscription id's" in an array 
+    notification.headings = { en: 'My Notification' }; // notification heading 
+    notification.contents = {    // notification content
+        en: req.body.message
+    };
+    
+
+
 
     try {
-        const ONESIGNAL_APP_ID = 'd3feb1d4-dcd3-468f-826f-5481d02c64d3';
-        console.log(ONESIGNAL_APP_ID);
+        const response = await client.createNotification(notification);
+        res.json(response);
+    } catch (error) {
+        console.error('Error sending notification:', error);
 
-        const app_key_provider = {
-            getToken(){
-                return 'MzU1ZjFkYWUtOGQwNS00ZmJiLWIzZmMtYTZlZmIwYzU2MTE3';
-            
-            }
-            
-        };
-        const configuration = OneSignal.createConfiguration({
-            authMethods: {
-                app_key: {
-                    tokenProvider: app_key_provider
-                }
-            
-            }
-        });
-        const client = new OneSignal.DefaultApi(configuration);
+        if (error.body && error.body.errors && error.body.errors.length > 0) {
+        console.error('OneSignal Error:', error.body.errors[0].message);
+        }
 
-        const notification = new OneSignal.Notification();
-        
-        notification.app_id = ONESIGNAL_APP_ID;
-        
-        notification.included_segments = ['Subscribed Users'];
-        
-        // written by "manikanta" 
-        //start
-        // const targetUserId = '654c7c8da6e94f0a9695919b';
-
-        // notification.include_player_ids = [targetUserId]
-        // end
-
-
-        notification.contents = {
-            en: req.body.hello
-        };
-
-        const {id} = await client.createNotification(notification);
-        
-        const response = await client.getNotification(ONESIGNAL_APP_ID, id);
-        console.log(response);
-        res.status(200).json(response)
-
-        // console.log(`Notification sent to user ${targetUserId}, Notification ID: ${id}`);
-
-
-        // res.status(200).json("notification sent successfully")
-    }
-    catch(err) {
-        res.status(500).json({
-            err_msg: "API Error occured while sending notification",
-            error: err.message
-        });
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-// const sdk = require('api')('@onesignal/v9.0#7bax30lfo8ah5k');
 
-// router.post('/notifications', (req, res, next) => {
-//     console.log("hello");
-//     sdk.createNotification({
-//       included_segments: ['Subscribed Users'],
-//       contents: {
-//         en: 'English or Any Language Message',
-//         es: 'Spanish Message'
-//       },
-//     //   name: 'INTERNAL_CAMPAIGN_NAME'
-//     }, {
-//       authorization: 'Basic MzU1ZjFkYWUtOGQwNS00ZmJiLWIzZmMtYTZlZmIwYzU2MTE3'
-//     })
-//       .then(({ data }) => console.log(data))
-//       .catch(err => console.error(err)); 
-// })
+
+router.post('/onesignalPlayerId', async (req, res) => {
+  console.log(req.body.playerID)
+})
+
+
 module.exports = router;

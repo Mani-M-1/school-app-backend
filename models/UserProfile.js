@@ -17,6 +17,7 @@ const UserProfileSchema = mongoose.Schema({
     //define the object ID
    _id: mongoose.Schema.Types.ObjectId,
    username: { type: String, required: true },//email
+//    playerId: {},
    password: { type: String, required: true },
    mobileNo: { type: Number, required: true},
    //img:{ data: Buffer, contentType: String },
