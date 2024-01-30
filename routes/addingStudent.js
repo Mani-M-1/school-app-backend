@@ -109,7 +109,7 @@ router.post('/student', async (req, res) => {
       lastName: req.body.lastName,
       role: "student",
       school: req.body.schoolname,
-      emergency: req.body.mobileNumber,
+      emergency: req.body.mobileNumber
     }) 
     
     // await studentProfile.save()

@@ -53,7 +53,8 @@ const { callbackPromise } = require('nodemailer/lib/shared');
 // const secrets = require('./secrets');
 
 //mongo db connection
-mongoose.connect('mongodb+srv://venuazmeera:mongo_venu69@cluster0.7ewrhqm.mongodb.net/?retryWrites=true&w=majority');
+// mongoose.connect('mongodb+srv://venuazmeera:mongo_venu69@cluster0.7ewrhqm.mongodb.net/?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://sololegacySSDS:solomani@ssdscluster.eyxof4g.mongodb.net/school-app');
 //appling pakages to our incoming requests
 //app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));

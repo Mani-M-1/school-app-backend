@@ -144,56 +144,32 @@ router.post('/', (req, res, next)=>{
 
 
 //this is workig router not added json webtoken only
-router.post('/login', (req, res, next)=>{
-  //  const username = req.params.username;
-  //  const password = req.params.password;
-     
-    
+router.post('/login', async (req, res, next)=>{  // api modified by "manikanta" 
+  try {
+    const userDetails = await UserSignup.findOne({username: req.body.username});
   
-      var username=req.body.username;
-      console.log(username)
-   UserSignup.findOne({username:username}).select().exec().then( doc => {
-    console.log(username)
-    var user  = req.body.username;
-    var pass  = req.body.password;
-    // var role = req.body.role;
-
-
-   
-   
-    if(user == doc.username && pass == doc.password){
-        
-     // res.status(200).json({Authentication: doc._id})
-      res.status(200).json({Authentication: doc._id,
-        userData: doc,
-        // added role for role based navigation
-        role: doc.role,
-        username: doc.username,
-        school: doc.school,
-        firstName: doc.firstName,
-        lastName: doc.lastName,
-        mobileNo: doc.mobileNo,
-        emergency: doc.emergency,
-        profile: doc.profile,
-
-              message: "Success"})
-    }
-    else
-    { 
-       
-        res.status(400).json({ Authentication: 'Failed to login please check username and password',
-                 message:'failed'
-                });
-
-    }
-
-   }).catch(err => {
-       console.log(err);
-       
-       res.status(500).json({error: err});
-   });
-
-
+      if(req.body.username == userDetails.username && req.body.password == userDetails.password){
+        res.status(200).json({
+          userData: userDetails,
+          // added role for role based navigation
+          role: userDetails.role,
+          username: userDetails.username,
+          school: userDetails.school,
+          firstName: userDetails.firstName,
+          lastName: userDetails.lastName,
+          mobileNo: userDetails.mobileNo,
+          emergency: userDetails.emergency,
+          profile: userDetails.profile,
+          message: "Success"
+        })
+      }
+      else {
+        res.status(404).json({message: "Failed to login please check username and password"});
+      }
+  }
+  catch(err) {
+    res.status(500).json({err_msg: "API Error occured while loging in"});
+  }
 });
 
 

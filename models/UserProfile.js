@@ -28,7 +28,8 @@ const UserProfileSchema = mongoose.Schema({
    school: {type: String, required: true},
    emergency: { type: Number, required: true},
    profile: { type: String },
-   enrolledCourses: [] // only for students to show the "enrolled courses"
+   enrolledCourses: [], // only for students to show the "enrolled courses"
+//    onesignalExternalId: {type: String, default: "randomExternalId"}
 //    currentCourses:[], //only for students, to add which courses they enrolled
 //    completedCourses:[]  // only for studenst to add which courses the have finished so far
 });
