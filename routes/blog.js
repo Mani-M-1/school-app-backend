@@ -10,17 +10,18 @@ router.get('/', (req, res, next) => {
     .then(docs => {
       const response = {
         count: docs.length,
-        posts: docs.map(doc => {
-          return {
-            title: doc.title,
-            username: doc.username,
-            content: doc.content,
-            Name: doc.Name,
-            images: doc.images,
-            _id: doc._id,
-            timestamp: doc.timestamp
-          }
-        })
+        posts: docs
+        // posts: docs.map(doc => {
+        //   return {
+        //     title: doc.title,
+        //     username: doc.username,
+        //     content: doc.content,
+        //     Name: doc.Name,
+        //     images: doc.images,
+        //     _id: doc._id,
+        //     timestamp: doc.timestamp
+        //   }
+        // })
       };
       res.status(200).json(response);
     })

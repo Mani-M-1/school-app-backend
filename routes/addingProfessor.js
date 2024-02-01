@@ -123,7 +123,7 @@ router.get("/search/:key",async (req,res) => {
 // Create a POST route to send an email
 router.post('/send-email', (req, res) => {
   const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
           user: "smartsquard1234@gmail.com",
           pass: "bdgnfmzfemlsmsob"

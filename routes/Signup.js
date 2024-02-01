@@ -170,6 +170,74 @@ router.post('/login', async (req, res, next)=>{  // api modified by "manikanta"
   catch(err) {
     res.status(500).json({err_msg: "API Error occured while loging in"});
   }
+
+
+
+  
+  // if (req.body.onesignalExternalId !== null) {
+  //   try {
+  //     await UserSignup.updateOne(
+  //       {
+  //         username: req.body.username
+  //       },
+  //       {
+  //         $set: {
+  //           onesignalExternalId: req.body.onesignalExternalId
+  //         }
+  //       },
+  //       {
+  //         new: true
+  //       }
+  //     )
+      
+  //     const userDetails = await UserSignup.findOne({username: req.body.username});
+
+  //     if(req.body.username == userDetails.username && req.body.password == userDetails.password){
+  //       res.status(200).json({
+  //         userData: userDetails,
+  //         // added role for role based navigation
+  //         role: userDetails.role,
+  //         username: userDetails.username,
+  //         school: userDetails.school,
+  //         firstName: userDetails.firstName,
+  //         lastName: userDetails.lastName,
+  //         mobileNo: userDetails.mobileNo,
+  //         emergency: userDetails.emergency,
+  //         profile: userDetails.profile,
+  //         message: "Success"
+  //       })
+  //     }
+  //     else {
+  //       res.status(404).json({message: "Failed to login please check username and password"});
+  //     }
+
+  //   }
+  //   catch(err) {
+  //     res.status(500).json({message: "API Error occured while adding onesignal external id in user profile"});
+  //   }
+  // }
+  // else {
+  //   const userDetails = await UserSignup.findOne({username: req.body.username});
+
+  //   if(req.body.username == userDetails.username && req.body.password == userDetails.password){
+  //     res.status(200).json({
+  //       userData: userDetails,
+  //       // added role for role based navigation
+  //       role: userDetails.role,
+  //       username: userDetails.username,
+  //       school: userDetails.school,
+  //       firstName: userDetails.firstName,
+  //       lastName: userDetails.lastName,
+  //       mobileNo: userDetails.mobileNo,
+  //       emergency: userDetails.emergency,
+  //       profile: userDetails.profile,
+  //       message: "Success"
+  //     })
+  //   }
+  //   else {
+  //     res.status(404).json({message: "Failed to login please check username and password"});
+  //   }
+  // }
 });
 
 
