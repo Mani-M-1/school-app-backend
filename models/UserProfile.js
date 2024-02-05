@@ -16,7 +16,7 @@ const mongoose= require("mongoose");
 const UserProfileSchema = mongoose.Schema({
     //define the object ID
    _id: mongoose.Schema.Types.ObjectId,
-   username: { type: String, required: true },//email
+   username: { type: String, required: true, unique: true },//email
 //    playerId: {},
    password: { type: String, required: true },
    mobileNo: { type: Number, required: true},

@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const blogModel = require('../models/blog');
 
-// get all method..
+// get all blogs method..
 router.get('/', (req, res, next) => {
   blogModel.find()
     .exec()
@@ -48,6 +48,28 @@ router.get('/:userName', (req, res, next) => {
        });
    });
 });
+
+
+
+// get specific blog by id {written by "manikanta"}
+router.get('/getSpecificBlog/:blogId', async (req, res) => {
+  try {
+    const blog = await blogModel.findById(req.params.blogId);
+
+    if (!blog) {
+      res.status(404).json({err_msg: "Blog not found"});
+    }
+
+    
+    res.status(200).json({
+      message: "Blog fetched successfully",
+      blogDetails: blog
+    })
+  }
+  catch(err) {
+    res.status(500).json({err_msg: "API Error occured while getting specific blog"})
+  }
+})
 
   
   // post a new task
@@ -135,29 +157,29 @@ router.put('/:id', (req, res) => {
   });
 
   // Likes API
-  router.post('/:id/like', (req, res, next) => {
-    const BlogId = req.params.id; // Corrected parameter name
+  // router.post('/:id/like', (req, res, next) => {
+  //   const BlogId = req.params.id; // Corrected parameter name
   
-    // Find the blog post by ID
-    blogModel.findById(BlogId)
-      .exec()
-      .then(Blog => {
-        if (!Blog) {
-          return res.status(404).json({ message: 'Blog not found' });
-        }
+  //   // Find the blog post by ID
+  //   blogModel.findById(BlogId)
+  //     .exec()
+  //     .then(Blog => {
+  //       if (!Blog) {
+  //         return res.status(404).json({ message: 'Blog not found' });
+  //       }
   
-        // Increment the likes count and save the updated blog post
-        Blog.likes += 1;
-        return Blog.save();
-      })
-      .then(updatedBlog => {
-        res.status(200).json({ message: 'Like added successfully', updatedBlog });
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({ error: err });
-      });
-  });
+  //       // Increment the likes count and save the updated blog post
+  //       Blog.likes += 1;
+  //       return Blog.save();
+  //     })
+  //     .then(updatedBlog => {
+  //       res.status(200).json({ message: 'Like added successfully', updatedBlog });
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.status(500).json({ error: err });
+  //     });
+  // });
 
   // Comments API
   // router.post('/:id/comment', (req, res, next) => {
@@ -190,6 +212,109 @@ router.put('/:id', (req, res) => {
   // });
   
 
+
+
+
+
+    // Like a blog
+router.post('/likeblog/:blogId', async (req, res) => {
+  const { blogId } = req.params;
+  console.log(blogId)
+  try {
+      const { username } = req.body;
+      const blogLike = { username, blogId: blogId, isLiked: true };
+      console.log(username);
+      // Update the blog with the like
+      const blog = await blogModel.findByIdAndUpdate(
+          blogId,
+          { $push: { likedBy: blogLike } },
+          { new: true }
+      );
+
+      res.status(200).json(blog);
+  } catch (err) {
+      res.status(500).json({ err_msg: err.message });
+  }
+});
+
+
+
+
+
+
+// Dislike a blog
+router.post('/dislikeblog/:blogId', async (req, res) => {
+  const { blogId } = req.params
+
+  try {
+    const { username } = req.body;
+    const blogLike = { username, blogId: blogId, isLiked: true };
+      // Remove the like record
+      const blog = await blogModel.findByIdAndUpdate(
+          blogId,
+          { $pull: { likedBy: blogLike } },
+          { new: true }
+      );
+
+      res.status(200).json(blog);
+  } catch (err) {
+      res.status(500).json({ err_msg: err.message });
+  }
+});
+
+
+
+// remove all likes 
+router.delete('/deletedAllLikes/:blogId', async (req, res) => {
+  const { blogId } = req.params
+
+  try {
+      const blog = await blogModel.findByIdAndUpdate(
+          blogId,
+          { $set: { likedBy: [] } },
+          { new: true }
+      );
+
+      res.status(200).json({message: "All likes deleted"});
+  } catch (err) {
+      res.status(500).json({ err_msg: err.message });
+  }
+});
+
+
+
+
+// // GET liked users count
+// router.get('/getLikesCount', async (req, res) => {
+//   try {
+//       // Fetch all blogs
+//       const blogs = await blogModel.find();
+
+//       // Calculate like counts for each blog
+//       const blogsWithLikeCounts = blogs.map(blog => {
+//           return {
+//               ...blog.toObject(),
+//               likeCount: blog.likes.length // Calculate like count
+//           };
+//       });
+
+//       res.status(200).json(blogsWithLikeCounts);
+//   } catch (err) {
+//       res.status(500).json({ error: err.message });
+//   }
+// });
+
+
+
+
+
+
+
+
+
+
+
+
   //comment router
   router.post('/comment', (req, res, next) =>{
     const comment = {
@@ -198,12 +323,12 @@ router.put('/:id', (req, res) => {
       comment: req.body.comment,
       timeStamp: new Date() 
     }
-    console.log(req.body.comment);
-    console.log(req.body.username);
+    console.log(`req.body.comment: ${req.body.comment}`);
+    console.log(`req.body.username: ${req.body.username}`);
 
     var query = {$push: {comments: comment}}
-    console.log(req.body._id);
-    console.log(comment)
+    console.log(`req.body._id: ${req.body._id}`);
+    console.log(`comment: ${comment}`)
 
     blogModel.findByIdAndUpdate({_id: req.body._id}, query)
     .select()
@@ -214,6 +339,7 @@ router.put('/:id', (req, res) => {
           message: "Comment posted successfully",
           data: doc
         })
+        console.log(doc);
       }else{
         res.status(200).json({
           message: "no matching docs found"
@@ -229,47 +355,61 @@ router.put('/:id', (req, res) => {
 
   });
 
+  // delete all comments for a specific blog 
+  router.delete('/deleteAllComments/:blogId', async (req, res) => {
+    try {
+      const {blogId} = req.params;
+
+      await blogModel.updateOne({_id: blogId}, {$set: {comments: []}}, {new: true})
+
+      res.status(200).json({message: "All comments are deleted successfully"});
+    }
+    catch(err) {cl
+      res.status(500).json({err_msg: "API Error occured while deleting comments"});
+    }
+  })
+
   //like router for blogs
  // Assuming you have the necessary imports and route setup here
 
-  router.post('/like', async (req, res, next) => {
-    const blogId = req.body.blogId;
-    const username = req.body.username;
-// here we need pu action : it should like and unlike
-//i need to write it in schema
-    try {
-      const blog = await Blog.findById(blogId);
+//   router.post('/like', async (req, res, next) => {
+//     const blogId = req.body.blogId;
+//     const username = req.body.username;
+// // here we need pu action : it should like and unlike
+// //i need to write it in schema
+//     try {
+//       const blog = await Blog.findById(blogId);
 
-      if (!blog) {
-        return res.status(404).json({ message: 'Blog not found' });
-      }
+//       if (!blog) {
+//         return res.status(404).json({ message: 'Blog not found' });
+//       }
 
-      const userIndex = blog.likedBy.indexOf(username);
+//       const userIndex = blog.likedBy.indexOf(username);
 
-      if (userIndex !== -1) {
-        // User has already liked the blog, so undo the like
-        blog.likes -= 1;
-        blog.likedBy.splice(userIndex, 1); // Remove the user from likedBy array
-      } else {
-        // User has not liked the blog, so add the like
-        blog.likes += 1;
-        blog.likedBy.push(username);
-      }
+//       if (userIndex !== -1) {
+//         // User has already liked the blog, so undo the like
+//         blog.likes -= 1;
+//         blog.likedBy.splice(userIndex, 1); // Remove the user from likedBy array
+//       } else {
+//         // User has not liked the blog, so add the like
+//         blog.likes += 1;
+//         blog.likedBy.push(username);
+//       }
 
-      // Save the updated blog
-      const updatedBlog = await blog.save();
+//       // Save the updated blog
+//       const updatedBlog = await blog.save();
 
-      res.status(200).json({
-        message: 'Blog like updated successfully',
-        updatedBlog: updatedBlog,
-      });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        error: err,
-      });
-    }
-  });
+//       res.status(200).json({
+//         message: 'Blog like updated successfully',
+//         updatedBlog: updatedBlog,
+//       });
+//     } catch (err) {
+//       console.error(err);
+//       res.status(500).json({
+//         error: err,
+//       });
+//     }
+//   });
 
 
 

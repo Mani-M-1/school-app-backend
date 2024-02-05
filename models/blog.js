@@ -32,6 +32,12 @@ const commentSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
 });
 
+const blogLikeSchema = new mongoose.Schema({
+  isLiked: {type: Boolean, default: false},
+  username: {type: String, required: true},
+  blogId: {type: String, required: true}
+})
+
 const BlogSchema = new mongoose.Schema({
   _id: mongoose.Types.ObjectId,
   title: { type: String, required: true },
@@ -41,9 +47,9 @@ const BlogSchema = new mongoose.Schema({
   // images: { type: [String], default: [] },
   images: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
-  likes: { type: Number, default: 0 }, // Number of likes for the blog
+  // likes: { type: Number, default: 0 }, // Number of likes for the blog
   comments: { type: [commentSchema] },
-  likedBy: [{ type: String }], // Array to store usernames of users who liked the blog
+  likedBy: { type: [blogLikeSchema] }, // Array to store usernames of users who liked the blog
 });
 
 module.exports = mongoose.model('Blog', BlogSchema);
