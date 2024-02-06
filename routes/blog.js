@@ -156,64 +156,6 @@ router.put('/:id', (req, res) => {
       });
   });
 
-  // Likes API
-  // router.post('/:id/like', (req, res, next) => {
-  //   const BlogId = req.params.id; // Corrected parameter name
-  
-  //   // Find the blog post by ID
-  //   blogModel.findById(BlogId)
-  //     .exec()
-  //     .then(Blog => {
-  //       if (!Blog) {
-  //         return res.status(404).json({ message: 'Blog not found' });
-  //       }
-  
-  //       // Increment the likes count and save the updated blog post
-  //       Blog.likes += 1;
-  //       return Blog.save();
-  //     })
-  //     .then(updatedBlog => {
-  //       res.status(200).json({ message: 'Like added successfully', updatedBlog });
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.status(500).json({ error: err });
-  //     });
-  // });
-
-  // Comments API
-  // router.post('/:id/comment', (req, res, next) => {
-  //   const BlogId = req.params.id;
-  //   const comment = {
-  //     username: req.body.username,
-  //     comment: req.body.comment
-  //   };
-  //    // Assuming the request body contains the comment data
-  
-  //   // Find the blog post by ID
-  //   blogModel.findById(BlogId)
-  //     .exec()
-  //     .then(Blog => {
-  //       if (!Blog) {
-  //         return res.status(404).json({ message: 'Blog not found' });
-  //       }
-  
-  //       // Add the new comment to the comments array in the blog post
-  //       Blog.comments.push(comment);
-  //       return Blog.save();
-  //     })
-  //     .then(updatedBlog => {
-  //       res.status(200).json({ message: 'Comment added successfully', updatedBlog });
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.status(500).json({ error: err });
-  //     });
-  // });
-  
-
-
-
 
 
     // Like a blog
