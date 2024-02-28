@@ -12,6 +12,11 @@ const fs = require('fs');
 
 //importing schema from models folder
 const WeeklyCourse = require('../models/WeeklyCourse');
+
+const onesignalInitialization = require('../onesignalInitialization');
+
+
+
 //const upload = multer({ dest: '../uploads/' });
 
 
@@ -77,6 +82,40 @@ const upload = multer({storage: storage,
 //       throw error;
 //     }
 //   }
+
+
+
+
+// async function sendNotificationAfterAddingCourse({professorName, username, profile}) {
+//   const {client, notification} = onesignalInitialization(); // getting "client" & "notification" from the "onesignalInitialization()" function
+  
+//   notification.include_external_user_ids = req.body.externalIdsArr; // providing multiple "subscription id's" in an array 
+//   notification.headings = { en: "School App" }; // notification heading 
+//   notification.contents = { en: `${professorName} added a new weekly course, please checkout`}; // notification content
+//   notification.data = {
+//     username: username,
+//     profile: profile
+//   }
+
+//   try {
+//     const response = await client.createNotification(notification);
+//     res.json(response);
+//   } 
+//   catch (error) {
+//     console.error('Error sending notification:', error);
+
+//     if (error.body && error.body.errors && error.body.errors.length > 0) {
+//     console.error('OneSignal Error:', error.body.errors[0].message);
+//     }
+
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// }
+
+
+
+
+
 
 //get all weekly courses
 router.get('/', (req, res, next) => {
@@ -166,6 +205,9 @@ router.post('/', async (req, res, next) => {
           message: 'Handling POST requests to /Weeklycourse',
           courseCreated: result
         });
+
+        // invoking the sendNotificationAfterAddingCourse function to send notifications to all the students of the same school as professor
+        // sendNotificationAfterAddingCourse({professorName: req.body.ProfessorName, username: req.body.NotificationDetails.username, profile: req.body.NotificationDetails.profile})
       })
       
       .catch(err => {
@@ -502,6 +544,69 @@ const filename= '/Users/rahulazmeera/Desktop/images/venu.jpg';
 
 
 
+
+// added by "manikanta"
+
+
+// updating main course details
+router.put('/updateMainCourseDetails/:courseId', async (req, res) => {
+  try {
+
+
+    const course = await WeeklyCourse.findOne({_id: req.params.courseId});
+
+    if (!course) {
+      res.status(404).json({err_msg: "Course not found"});
+    }
+
+
+    await WeeklyCourse.updateOne({_id: req.params.courseId}, {
+      // $set: {
+      //   CourseName: req.body.CourseName,
+      //   ProfessorName: req.body.ProfessorName,
+      //   username: req.body.username,
+      //   CourseDate: req.body.CourseDate,
+      //   Coursetimings: req.body.Coursetimings,
+      //   Accessclass: req.body.Accessclass,
+      //   Discription: req.body.Discription,
+      //   CourseImage: req.body.CourseImage,
+      // }
+      $set: req.body
+    },
+    {
+      new: true
+    }
+    )
+
+    res.status(200).json({message: 'Course Details updated successfully'})
+
+  }
+  catch(err) {
+    res.status(500).json({err_msg: "API Error occured while updating main course details"});
+  }
+});
+
+// deleting main course
+router.delete('/deleteMainCourse/:courseId', async (req, res) => {
+  try {
+
+
+    const course = await WeeklyCourse.findOne({_id: req.params.courseId});
+
+    if (!course) {
+      res.status(404).json({err_msg: "Course not found"});
+    }
+
+
+    await WeeklyCourse.deleteOne({_id: req.params.courseId})
+
+    res.status(200).json({message: 'Course Deleted successfully'})
+
+  }
+  catch(err) {
+    res.status(500).json({err_msg: "API Error occured while deleting main course"});
+  }
+});
 
 
 module.exports = router;

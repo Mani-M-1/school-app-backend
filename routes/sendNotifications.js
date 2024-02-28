@@ -1,39 +1,41 @@
 const express = require('express');
 const router = express.Router();
 // import * as Onesignal from '@onesignal/node-onesignal';
-const sdk = require('api')('@onesignal/v9.0#7bax30lfo8ah5k');
-const OneSignal = require('@onesignal/node-onesignal');
+// const sdk = require('api')('@onesignal/v9.0#7bax30lfo8ah5k');
+// const OneSignal = require('@onesignal/node-onesignal');
+
+
+const onesignalInitialization = require('../onesignalInitialization');
 
 
 
 
-
-function onesignalInitialization() {
-  const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID; 
+// function onesignalInitialization() {
+//   const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID; 
         
-    const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
+//     const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
 
-    const app_key_provider = {
-      getToken() {
-        return ONESIGNAL_API_KEY;
-      },
-    };
+//     const app_key_provider = {
+//       getToken() {
+//         return ONESIGNAL_API_KEY;
+//       },
+//     };
   
-    const configuration = OneSignal.createConfiguration({
-      authMethods: {
-        app_key: {
-          tokenProvider: app_key_provider,
-        },
-      },
-    });
+//     const configuration = OneSignal.createConfiguration({
+//       authMethods: {
+//         app_key: {
+//           tokenProvider: app_key_provider,
+//         },
+//       },
+//     });
   
-    const client = new OneSignal.DefaultApi(configuration);
+//     const client = new OneSignal.DefaultApi(configuration);
   
-    const notification = new OneSignal.Notification();
-    notification.app_id = ONESIGNAL_APP_ID;
+//     const notification = new OneSignal.Notification();
+//     notification.app_id = ONESIGNAL_APP_ID;
 
-    return {client, notification};
-}
+//     return {client, notification};
+// }
 
 
 
@@ -74,7 +76,10 @@ router.post('/sendNotifications/specificUsers', async (req, res, next)=> {
   notification.include_external_user_ids = req.body.externalIdsArr; // providing multiple "subscription id's" in an array 
   notification.headings = { en: req.body.heading }; // notification heading 
   notification.contents = { en: req.body.content}; // notification content
-  
+  notification.data = {
+    username: req.body.username,
+    profile: req.body.profile
+  }
   // fetchUsersByExternalId(req.body.externalId);
       
 
