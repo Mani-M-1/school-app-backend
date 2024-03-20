@@ -43,28 +43,33 @@ const onesignalInitialization = require('../onesignalInitialization');
 //this router for sending notifications to all subscribed devices
 router.post('/sendNotifications/allUsers', async (req, res, next) => {
 
-    const {client, notification} = onesignalInitialization(); // getting "client" & "notification" from the "onesignalInitialization()" function
+  const {client, notification} = onesignalInitialization(); // getting "client" & "notification" from the "onesignalInitialization()" function
 
-    notification.included_segments = ['Total Subscriptions'];
-    notification.headings = { en: req.body.heading };
-    notification.contents = { en: req.body.content };
-  
-    try {
-      const response = await client.createNotification(notification);
-      res.json(response);
-    } 
-    catch (error) {
+  notification.included_segments = ['Total Subscriptions'];
+  notification.headings = { en: req.body.heading };
+  notification.contents = { en: req.body.content };
+  notification.data = {
+    email: req.body.email,
+    profile: req.body.profile
+  }
 
-      if (error.body && error.body.errors && error.body.errors.length > 0) {
-        console.error('OneSignal Error:', error.body.errors[0].message);
-      }
-  
-      res.status(500).json({ error: 'Internal Server Error' });
+
+  try {
+    const response = await client.createNotification(notification);
+    res.json(response);
+  } 
+  catch (error) {
+
+    if (error.body && error.body.errors && error.body.errors.length > 0) {
+      console.error('OneSignal Error:', error.body.errors[0].message);
     }
-  });
+
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
-  //this router for sending notification to specific device using player Ids
+//this router for sending notification to specific device using player Ids
 router.post('/sendNotifications/specificUsers', async (req, res, next)=> {
   
   const {client, notification} = onesignalInitialization(); // getting "client" & "notification" from the "onesignalInitialization()" function
@@ -77,7 +82,7 @@ router.post('/sendNotifications/specificUsers', async (req, res, next)=> {
   notification.headings = { en: req.body.heading }; // notification heading 
   notification.contents = { en: req.body.content}; // notification content
   notification.data = {
-    username: req.body.username,
+    email: req.body.email,
     profile: req.body.profile
   }
   // fetchUsersByExternalId(req.body.externalId);

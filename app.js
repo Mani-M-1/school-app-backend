@@ -39,15 +39,13 @@ const nodemailer = require('nodemailer');
 // // importing courses router in app from router folder
 // const coursesRoutes = require('./routes/courses');
 const WeeklyCourseRoutes = require('./routes/WeeklyCourse');
-const userSignupRoutes = require('./routes/Signup');
+const userRoutes = require('./routes/User');
 const sendNotificationsRoutes = require('./routes/sendNotifications');
 const todoRoutes = require('./routes/todo');
 const blogRoutes = require('./routes/blog');
 const courEnrollRoutes = require('./routes/courseEnrollment');
 
-//sravans code 
-const addingProfessorsRoutes = require('./routes/addingProfessor')
-const addingStudentsRoutes = require('./routes/addingStudent');
+
 const { callbackPromise } = require('nodemailer/lib/shared');
 // const errorHandler = require('errorhandler');
 // const secrets = require('./secrets');
@@ -234,15 +232,12 @@ app.post('/uploadfile', (req, res) => {
 
 // app.use('/courses', coursesRoutes);
 app.use('/weeklyCourse', WeeklyCourseRoutes);
-app.use('/Signup', userSignupRoutes);
+app.use('/user', userRoutes);
 app.use('/notifications', sendNotificationsRoutes);
 app.use('/todo', todoRoutes);
 app.use('/blog', blogRoutes);
 app.use('/enrollCourse', courEnrollRoutes);
 
-//sravans routes
-app.use('/addingProfessors', addingProfessorsRoutes)
-app.use('/addingStudents', addingStudentsRoutes)
 
 // For error handling
 app.use((req, res, next) => {

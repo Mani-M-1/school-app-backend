@@ -13,7 +13,7 @@ const fs = require('fs');
 //importing schema from models folder
 const WeeklyCourse = require('../models/WeeklyCourse');
 
-const onesignalInitialization = require('../onesignalInitialization');
+// const onesignalInitialization = require('../onesignalInitialization');
 
 
 
@@ -86,14 +86,14 @@ const upload = multer({storage: storage,
 
 
 
-// async function sendNotificationAfterAddingCourse({professorName, username, profile}) {
+// async function sendNotificationAfterAddingCourse({professorName, email, profile}) {
 //   const {client, notification} = onesignalInitialization(); // getting "client" & "notification" from the "onesignalInitialization()" function
   
 //   notification.include_external_user_ids = req.body.externalIdsArr; // providing multiple "subscription id's" in an array 
 //   notification.headings = { en: "School App" }; // notification heading 
 //   notification.contents = { en: `${professorName} added a new weekly course, please checkout`}; // notification content
 //   notification.data = {
-//     username: username,
+//     email: email,
 //     profile: profile
 //   }
 
@@ -118,8 +118,8 @@ const upload = multer({storage: storage,
 
 
 //get all weekly courses
-router.get('/', (req, res, next) => {
-   WeeklyCourse.find()
+router.get('/:schoolId', (req, res, next) => {
+   WeeklyCourse.find({schoolId: req.params.schoolId})
     .exec()
     .then( docs => {
         // console.log(docs);
@@ -135,8 +135,8 @@ router.get('/', (req, res, next) => {
 
 
 //get all weekly courses by professor
-router.get('/:userName', (req, res, next) => {
-  WeeklyCourse.find({username: req.params.userName})
+router.get('/professor/:email', (req, res, next) => {
+  WeeklyCourse.find({email: req.params.email})
    .exec()
    .then( docs => {
       //  console.log(docs);
@@ -189,13 +189,14 @@ router.post('/', async (req, res, next) => {
       _id: new mongoose.Types.ObjectId(),
       CourseName: req.body.CourseName,
       ProfessorName: req.body.ProfessorName,
-      username: req.body.username,
+      email: req.body.email,
       CourseDate: req.body.CourseDate,
       Coursetimings: req.body.Coursetimings,
       Accessclass: req.body.Accessclass,
       Discription: req.body.Discription,
       CourseImage: req.body.CourseImage, // Use the uploaded file name
-      CourseContent: CourseContentdata
+      CourseContent: CourseContentdata,
+      schoolId: req.body.schoolId
     });
 
     w_course.save()
@@ -207,7 +208,7 @@ router.post('/', async (req, res, next) => {
         });
 
         // invoking the sendNotificationAfterAddingCourse function to send notifications to all the students of the same school as professor
-        // sendNotificationAfterAddingCourse({professorName: req.body.ProfessorName, username: req.body.NotificationDetails.username, profile: req.body.NotificationDetails.profile})
+        // sendNotificationAfterAddingCourse({professorName: req.body.ProfessorName, email: req.body.NotificationDetails.email, profile: req.body.NotificationDetails.profile})
       })
       
       .catch(err => {
@@ -564,7 +565,7 @@ router.put('/updateMainCourseDetails/:courseId', async (req, res) => {
       // $set: {
       //   CourseName: req.body.CourseName,
       //   ProfessorName: req.body.ProfessorName,
-      //   username: req.body.username,
+      //   email: req.body.email,
       //   CourseDate: req.body.CourseDate,
       //   Coursetimings: req.body.Coursetimings,
       //   Accessclass: req.body.Accessclass,

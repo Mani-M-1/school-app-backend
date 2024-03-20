@@ -4,7 +4,7 @@ const mongoose = require('mongoose');    //import mongoose...this schema page
 //schema means design , structure
 const todoSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    username:{type: String, required: true},
+    email:{type: String, required: true},
     task: {type: String, required: true},
     priority:{type: String},
     date: {type: String},

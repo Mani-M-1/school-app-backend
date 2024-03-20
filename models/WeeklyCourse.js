@@ -20,14 +20,14 @@ const WeeklyCourseSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     CourseName: {type:String, },
     ProfessorName : { type: String, },
-    username: { type: String, },
+    email: { type: String, },
     CourseDate : { type: String, },
     Coursetimings: { type: String, },
     Accessclass: { type: String, },
     Discription: { type: String, },
     CourseImage: { type: String },
-    CourseContent:{ type:[CourseContentSchema], required: false }
-
+    CourseContent:{ type:[CourseContentSchema], required: false },
+    schoolId: {type: String}
 });
 
 

@@ -48,13 +48,13 @@ router.get('/', (req, res, next) => {
    });
 });
 
-//get router that finds tasks by username
+//get router that finds tasks by email
 
-router.get('/:username', (req, res, next) => {
+router.get('/:email', (req, res, next) => {
   console.log('alltask called')
 
-  //it will get the data based on username
- todomodel.find({username: req.params.username})
+  //it will get the data based on email
+ todomodel.find({email: req.params.email})
  //.select()
  .exec()
  .then(doc => {
@@ -62,7 +62,7 @@ router.get('/:username', (req, res, next) => {
     count: doc.length,
     tasks: doc.map(doc => {
         return {
-            username: doc.userName,
+            email: doc.email,
             task: doc.task,
             priority: doc.priority,
             date: doc.date,
@@ -84,30 +84,32 @@ router.get('/:username', (req, res, next) => {
 
 //post router
 router.post('/', (req, res, next) => {
-    const todo = new todomodel({
-       _id: new mongoose.Types.ObjectId,
-        username: req.body.username,
-        task: req.body.task,
-        priority: req.body.priority,
-        date: req.body.date,
-        category: req.body.category
+  const todo = new todomodel({
+      _id: new mongoose.Types.ObjectId,
+      email: req.body.email,
+      task: req.body.task,
+      priority: req.body.priority,
+      date: req.body.date,
+      category: req.body.category
+  });
+  todo
+  .save()
+  .then(result => {
+    console.log(result);
+  })
+  .catch(err => console.log(err));
+  res.status(201).json({
+      message: 'Handling POST request to /todo',
+      createdTodo: todo
     });
-    todo
-    .save()
-    .then(result => {
-      console.log(result);
-    })
-    .catch(err => console.log(err));
-    res.status(201).json({
-        message: 'Handling POST request to /todo',
-        createdTodo: todo
-     });
-     next();
-    });
+    
+  next();
+  
+});
 
   
 
-    //get 1..this id based get
+//get 1..this id based get
 router.get('/:todoId', (req, res, next) => {
     const id = req.params.todoId;
     //const todos = todos.find((p) => p._id == req.params.id);

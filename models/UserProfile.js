@@ -14,24 +14,23 @@ const mongoose= require("mongoose");
 
 //define the schema here
 const UserProfileSchema = mongoose.Schema({
-    //define the object ID
-   _id: mongoose.Schema.Types.ObjectId,
-   username: { type: String, required: true, unique: true },//email
-//    playerId: {},
+   email: { type: String, required: true, unique: true }, //email
    password: { type: String, required: true },
    mobileNo: { type: Number, required: true},
-   //img:{ data: Buffer, contentType: String },
-//    address:  subObj,
    firstName:  {type:String, required: true},
-   lastName:  {type:String, required: true},
-   role: {type:String, required: true},
-   school: {type: String, required: true},
-   emergency: { type: Number, required: true},
-   profile: { type: String },
-   enrolledCourses: [], // only for students to show the "enrolled courses"
-//    onesignalExternalId: {type: String, default: "randomExternalId"}
-//    currentCourses:[], //only for students, to add which courses they enrolled
-//    completedCourses:[]  // only for studenst to add which courses the have finished so far
+   lastName:  {type:String, required: true}, 
+   role: {type:String, required: true, enum: ['student', 'professor', 'principal']}, // "student", "professor" and "principal" 
+   school: {type: String, required: true}, // school name
+   emergency: { type: Number}, // phone number to call in case of emergency
+   profile: { type: String }, // profile image
+   yearOfStudy: { type: String }, // only for "student"
+   group: { type: String }, // only for "student"
+   gender: { type: String, enum: ['male', 'female', 'other'] },
+   subjects: { type: String }, // only for "principal"
+   schoolId: { type: String }, // (combination of "first letter of space seperated school name + 6 random digits ") generated while "principal" signup and this schoolId is assigned to students and professors (we should also send "schoolId" in email)
+   address: { type: String },
+   status: { type: String, enum: ["active", "inactive"] }, // active or blocked 
+   enrolledCourses: [{CourseId: {type: String}, CourseDetails: {type: mongoose.Schema.ObjectId, ref: 'WeeklyCourse'}, CourseName: {type: String}, isChecked: {type: Boolean}, isCompleted: {type: Boolean}}], // only for students to show the "enrolled courses"
 });
 
 
