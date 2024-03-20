@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const blogModel = require('../models/blog');
 
 // get all blogs method..
-router.get('/', (req, res, next) => {
-  blogModel.find()
+router.get('/school/:schoolId', (req, res, next) => {
+  blogModel.find({schoolId: req.params.schoolId})
     .exec()
     .then(docs => {
       const response = {
@@ -14,7 +14,7 @@ router.get('/', (req, res, next) => {
         // posts: docs.map(doc => {
         //   return {
         //     title: doc.title,
-        //     username: doc.username,
+        //     email: doc.email,
         //     content: doc.content,
         //     Name: doc.Name,
         //     images: doc.images,
@@ -34,8 +34,8 @@ router.get('/', (req, res, next) => {
 });
 
 //get all blogs posted professor
-router.get('/:userName', (req, res, next) => {
-  blogModel.find({username: req.params.userName})
+router.get('/:email', (req, res, next) => {
+  blogModel.find({email: req.params.email})
    .exec()
    .then( docs => {
        console.log(docs);
@@ -79,7 +79,7 @@ router.get('/getSpecificBlog/:blogId', async (req, res) => {
     // console.log(req.body.commentData);
     //   var commentData = { 
     //     _id: new mongoose.Types.ObjectId(),
-    //     username : req.body.commentData.username,
+    //     email : req.body.commentData.email,
     //     comment: req.body.commentData.comment,
     //     timeStamp: new Date()  
     //     }
@@ -89,13 +89,14 @@ router.get('/getSpecificBlog/:blogId', async (req, res) => {
     const blog = new blogModel({
       _id: new mongoose.Types.ObjectId(),
       title: req.body.title,
-      username: req.body.username,
+      email: req.body.email,
       content: req.body.content,
       Name: req.body.Name,
       images: req.body.images,
       timeStamp: new Date(), // add the current date and time
       // comments: commentData
-      comments: req.body.comments
+      comments: req.body.comments,
+      schoolId: req.body.schoolId
     });
 
     // save the new blog to the database
@@ -107,7 +108,7 @@ router.get('/getSpecificBlog/:blogId', async (req, res) => {
         message: "Blog created successfully",
         createdBlog: {
           title: result.title,
-          username: result.username,
+          email: result.email,
           content: result.content,
           Name: result.Name,
           images: result.images,
@@ -163,9 +164,9 @@ router.post('/likeblog/:blogId', async (req, res) => {
   const { blogId } = req.params;
   console.log(blogId)
   try {
-      const { username } = req.body;
-      const blogLike = { username, blogId: blogId, isLiked: true };
-      console.log(username);
+      const { email } = req.body;
+      const blogLike = { email, blogId: blogId, isLiked: true };
+      console.log(email);
       // Update the blog with the like
       const blog = await blogModel.findByIdAndUpdate(
           blogId,
@@ -189,8 +190,8 @@ router.post('/dislikeblog/:blogId', async (req, res) => {
   const { blogId } = req.params
 
   try {
-    const { username } = req.body;
-    const blogLike = { username, blogId: blogId, isLiked: true };
+    const { email } = req.body;
+    const blogLike = { email, blogId: blogId, isLiked: true };
       // Remove the like record
       const blog = await blogModel.findByIdAndUpdate(
           blogId,
@@ -261,12 +262,12 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
   router.post('/comment', (req, res, next) =>{
     const comment = {
       _id: new mongoose.Types.ObjectId(),
-      username: req.body.username,
+      email: req.body.email,
       comment: req.body.comment,
       timeStamp: new Date() 
     }
     console.log(`req.body.comment: ${req.body.comment}`);
-    console.log(`req.body.username: ${req.body.username}`);
+    console.log(`req.body.email: ${req.body.email}`);
 
     var query = {$push: {comments: comment}}
     console.log(`req.body._id: ${req.body._id}`);
@@ -316,7 +317,7 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
 
 //   router.post('/like', async (req, res, next) => {
 //     const blogId = req.body.blogId;
-//     const username = req.body.username;
+//     const email = req.body.email;
 // // here we need pu action : it should like and unlike
 // //i need to write it in schema
 //     try {
@@ -326,7 +327,7 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
 //         return res.status(404).json({ message: 'Blog not found' });
 //       }
 
-//       const userIndex = blog.likedBy.indexOf(username);
+//       const userIndex = blog.likedBy.indexOf(email);
 
 //       if (userIndex !== -1) {
 //         // User has already liked the blog, so undo the like
@@ -335,7 +336,7 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
 //       } else {
 //         // User has not liked the blog, so add the like
 //         blog.likes += 1;
-//         blog.likedBy.push(username);
+//         blog.likedBy.push(email);
 //       }
 
 //       // Save the updated blog
