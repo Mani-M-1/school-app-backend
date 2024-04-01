@@ -28,6 +28,7 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   email: { type: String, required: true },
+  firstName: { type: String },
   comment: { type: String },
   timestamp: { type: Date, default: Date.now },
 });

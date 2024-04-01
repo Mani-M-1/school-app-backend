@@ -263,6 +263,7 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
     const comment = {
       _id: new mongoose.Types.ObjectId(),
       email: req.body.email,
+      firstName: req.body.firstName,
       comment: req.body.comment,
       timeStamp: new Date() 
     }
