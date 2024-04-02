@@ -86,7 +86,7 @@ router.post('/signup', async (req, res, next)=>{
       try {
         const createdUser = new UserProfile(body); // only for "principal"
         await createdUser.save(); 
-        res.status(200).json({message: "User created successfully!"});
+        res.status(200).json({message: "User created successfully!", createdUser});
       }
       catch(err) {
         res.status(500).json({err_msg: "API Error occured while creating user", err_desc: err.message})
@@ -98,7 +98,7 @@ router.post('/signup', async (req, res, next)=>{
         const createdUser = new UserProfile(req.body); // for "students" and"professor
         const details = await createdUser.save(); 
         console.log(details)
-        res.status(200).json({message: "User created successfully!"});
+        res.status(200).json({message: "User created successfully!", createdUser});
       }
       catch(err) {
         res.status(500).json({err_msg: "API Error occured while creating user", err_desc: err.message})
