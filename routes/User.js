@@ -15,6 +15,10 @@ const fileRead= require('express-fileupload');
 var os = require('os');
 
 
+// for email service
+const nodemailer = require('nodemailer');
+
+
 // const storage = multer.diskStorage({
 //   destination:function(req, file, cb) {
 //     cb(null, './uploads/');
@@ -28,12 +32,11 @@ var os = require('os');
 
 
 
+
+
 //import the schema here
-// const User = require('../models/UserProfile');
 const UserProfile = require("../models/UserProfile");
-
-//const UserProfile = require("../models/UserProfile");
-
+const OTP = require("../models/OTP");
 
 
 //post method goes here
@@ -430,29 +433,144 @@ router.post('/profile/uploadfiles', (req, res) => {
 })
 
 
+function sendOTPtoEmail(email, otp) {
+  const output = `
+        <p> You have a request from ssdsorg@gmail.com through Student Corner App</p>
+        <h4>Your One Time Password (OTP) is ${otp}</h4>
+        `
+  const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+          user: "ssdsorg@gmail.com",
+          pass: "lzhvxwjwxljznhed"
+          // user: "smartsquard1234@gmail.com",
+          // pass: "bdgnfmzfemlsmsob"
+      }
+  });
+
+  const options = {
+      from: "ssdsorg@gmail.com",
+      to: email,
+      subject: "Student Corner One Time Password (OTP)!",
+      text: "Hello World!",
+      html : output
+  };
+
+  transporter.sendMail(options, (err, info) => {
+      if (err) {
+          console.log(err);
+          res.status(500).json({ error: 'An error occurred while sending the email.' });
+      } else {
+          console.log("Email sent: " + info.response);
+          res.json({ message: 'Email sent successfully.' });
+      }
+  });
+}
+
+
+
+// send OTP 
+router.post('/send-otp', async (req, res) => {
+  try {
+    const otpValue = Math.floor(Math.random() * 9000) + 1000;
+
+    const user = await UserProfile.findOne({email: req.body.email});
+
+    if (!user) {
+      res.status(404).json({err_msg: "User not found"});
+    }
+
+    const otp = new OTP({
+      email: req.body.email,
+      otp: otpValue
+    })
+
+    await otp.save();
+
+    res.status(200).json({message: "OTP sent to your mail successfully!"});
+
+    sendOTPtoEmail(req.body.email, otpValue);
+    
+  }
+  catch(err) {
+    res.status(500).json({err_msg: "API Error occured while sending OTP", err_desc: err.message});
+  }
+})
+
+
+// confirm OTP 
+router.post('/confirm-otp', async (req, res) => {
+  try {
+    const user = await UserProfile.findOne({email: req.body.email});
+
+    if (!user) {
+      res.status(404).json({err_msg: "User not found"});
+    }
+    
+    const otp = await OTP.findOne({email: req.body.email, otp: req.body.otp});
+    
+    if (!otp) {
+      res.status(404).json({err_msg: "OTP not found"});
+    }
+    else {
+      const otpCreatedDate = new Date(otp.createdAt);
+
+      const otpSubmitedDate = new Date();
+
+      const timeDifferenceInSeconds = Math.abs(otpCreatedDate - otpSubmitedDate) / 1000;
+
+
+      if (timeDifferenceInSeconds > 45) {
+        res.status(404).json({err_msg: "OTP Expired, please click on resend OTP!"});
+      }
+      
+      // else if (otp.otp !== req.body.otp) {
+      //   res.status(404).json({err_msg: "Incorrect OTP, please enter again!"});
+      // }
+
+      else {
+        res.status(200).json({message: "OTP Verified Successfully", otp: otp.otp})
+      }
+
+    }
+  }
+  catch(err) {
+    res.status(500).json({err_msg: "API Error occured while confirming OTP", err_desc: err.message});
+  }
+})
+
+
 // Update Password API
 router.put('/update-password', async (req, res) => {
-  const { email, currentPassword, newPassword } = req.body;
+  const { email, otp, password } = req.body;
 
   try {
-    const student = await UserProfile.findOne({ email });
 
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-    // console.log(student)
-    // Check if the current password matches
-    if (student.password !== currentPassword) {
-      return res.status(400).json({ message: 'Current password is incorrect' });
+    const otpObject = await OTP.findOne({email, otp})
+
+
+    if (!otpObject) {
+      return res.status(404).json({err_msg: "OPT not found"});
     }
 
-    // Update the student's password
-    student.password = newPassword;
-    await student.save();
+    const user = await UserProfile.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ err_msg: 'User not found' });
+    }
+
+    await UserProfile.updateOne({email}, {
+      $set: {
+        password
+      }
+    }, {new: true})
+
+
+    await OTP.deleteMany({email});
+
 
     return res.status(200).json({ message: 'Password updated successfully' });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: 'Server error' });
   }
 });
@@ -551,7 +669,7 @@ router.post('/send-email', (req, res) => {
 
   const output = `
         <h3>Hi ${user}</h3>
-        <p> You have a request from ssdsorg@gmail.com through School Corner App</p>
+        <p> You have a request from ssdsorg@gmail.com through Student Corner App</p>
         <h4>Your Details are given below </h4>
         <ul style="padding: 0;"> 
           <li style="list-style: none;"> Email: ${req.body.email} </li>
