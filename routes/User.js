@@ -225,7 +225,7 @@ router.get('/details/:userId', async (req, res) => {
 
 //get user profile using "email"
 router.get('/profile/:email', (req, res, next) =>{
-    User.findOne({email:req.params.email})
+    UserProfile.findOne({email:req.params.email})
     .exec()
     .then(doc =>{
      
