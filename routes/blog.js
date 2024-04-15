@@ -54,7 +54,7 @@ router.get('/:email', (req, res, next) => {
 // get specific blog by id {written by "manikanta"}
 router.get('/getSpecificBlog/:blogId', async (req, res) => {
   try {
-    const blog = await blogModel.findById(req.params.blogId);
+    const blog = await blogModel.findById(req.params.blogId).populate("comments.userDetails");
 
     if (!blog) {
       res.status(404).json({err_msg: "Blog not found"});
@@ -262,8 +262,7 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
   router.post('/comment', (req, res, next) =>{
     const comment = {
       _id: new mongoose.Types.ObjectId(),
-      email: req.body.email,
-      firstName: req.body.firstName,
+      userDetails: req.body.userId,
       comment: req.body.comment,
       timeStamp: new Date() 
     }
@@ -274,7 +273,8 @@ router.delete('/deletedAllLikes/:blogId', async (req, res) => {
     console.log(`req.body._id: ${req.body._id}`);
     console.log(`comment: ${comment}`)
 
-    blogModel.findByIdAndUpdate({_id: req.body._id}, query)
+    blogModel.findByIdAndUpdate({_id: req.body.blogId}, query)
+    
     .select()
     .exec()
     .then(doc => {
