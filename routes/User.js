@@ -37,6 +37,7 @@ const nodemailer = require('nodemailer');
 //import the schema here
 const UserProfile = require("../models/UserProfile");
 const OTP = require("../models/OTP");
+const School = require("../models/School");
 
 
 //post method goes here
@@ -69,7 +70,75 @@ function generateSchoolId(reqBody) {
 }
 
 
+// this is only for "principal"
+router.post('/add/principal', async (req, res, next)=>{
+  // for creating array of words 
+  console.log(req.body)
+  // const schoolId = generateSchoolId(req.body);
+  // console.log(schoolId)
+  // console.log({...req.body, schoolId: schoolId})
 
+
+  const user = await UserProfile.findOne({email: req.body.email});
+  console.log(user)
+
+  if (!user) {
+    const schoolId = generateSchoolId(req.body);
+    console.log(`schoolId: ${schoolId}`);
+
+    const {firstName, lastName, role, email, password, gender, mobileNo, emergency, address, school, schoolCode, schoolAddress, schoolPhoneNumber} = req.body;
+
+
+    const schoolFromDb = await School.findOne({schoolCode: schoolCode});
+    console.log(schoolFromDb);
+
+    if (!schoolFromDb) {
+      try {
+        // storing school data in database by using this api itself 
+        const schoolObj = new School({school, schoolCode, schoolAddress, schoolPhoneNumber})
+        await schoolObj.save(); 
+
+        console.log(`schoolObj: ${schoolObj}`);
+        
+
+        
+        const createdUser = new UserProfile({
+          firstName,
+          lastName, 
+          role, 
+          email, 
+          password, 
+          gender, 
+          mobileNo,
+          emergency, 
+          address, 
+          school, 
+          schoolId,
+          schoolDetails: schoolObj._id // this is object id of "school" this can be used to "populate" the data when ever required
+        }); // only for "principal"
+        await createdUser.save(); 
+
+        console.log(`createdUser: ${createdUser}`)
+        
+        
+        res.status(200).json({message: "Principal added successfully!", principalDetails : createdUser, schoolDetails:  schoolObj});
+      }
+      
+      catch(err) {
+        res.status(500).json({err_msg: "API Error occured while adding principal", err_desc: err.message})
+      }
+    }
+    else {
+      res.status(404).json({err_msg: "School already exists"});
+    }
+  }
+  else {
+    res.status(404).json({message: "User already exists!"});
+  }
+});
+
+
+// this is for only "student" and "professor"
 router.post('/signup', async (req, res, next)=>{
   // for creating array of words 
   console.log(req.body)
@@ -82,91 +151,19 @@ router.post('/signup', async (req, res, next)=>{
   console.log(user)
 
   if (!user) {
-    if (!req.body.schoolId && req.body.role === "principal") {
-      const schoolId = generateSchoolId(req.body);
-      const body = {...req.body, schoolId}
-
-      try {
-        const createdUser = new UserProfile(body); // only for "principal"
-        await createdUser.save(); 
-        res.status(200).json({message: "User created successfully!", createdUser});
-      }
-      catch(err) {
-        res.status(500).json({err_msg: "API Error occured while creating user", err_desc: err.message})
-      }
+    try {
+      const createdUser = new UserProfile(req.body); // for "students" and "professor
+      const details = await createdUser.save(); 
+      console.log(details)
+      res.status(200).json({message: "User created successfully!", createdUser});
     }
-    else {
-      console.log("non principal code")
-      try {
-        const createdUser = new UserProfile(req.body); // for "students" and"professor
-        const details = await createdUser.save(); 
-        console.log(details)
-        res.status(200).json({message: "User created successfully!", createdUser});
-      }
-      catch(err) {
-        res.status(500).json({err_msg: "API Error occured while creating user", err_desc: err.message})
-      }
+    catch(err) {
+      res.status(500).json({err_msg: "API Error occured while creating user", err_desc: err.message})
     }
-
-
   }
   else {
     res.status(404).json({message: "User already exists!"});
   }
-
-
-  // let user;
-
-  // if (!req.body.schoolId && req.body.role === "principal") {
-  //   const schoolId = generateSchoolId(req.body);
-  //   console.log(schoolId)
-  //   // user = new UserProfile({...req.body, schoolId: schoolId});
-  // }
-  
-  
-  
-  
-  
-  // user = new UserProfile(req.body);
-
-
-
-
-
-  // //first check if user is alredy existed 
-  // UserProfile.findOne({email: req.body.email }).select().exec().then(doc =>{
-    
-
-
-    
-  // if(doc == null){
-
-  //   user.save()
-  //   .then( result=> {
-  //     res.status(200).json({
-  //         message: "User signed up susccessfully",
-  //         status:"success",
-  //         Id: result._id,
-  //         userData: result
-  //     });
-
-  //   }) 
-  //   .catch(err => {
-  //     res.status(500).json({
-  //       error: err
-  //     });
-  //   })
-
-  // }else{
-  //     res.status(200).json({
-  //       message:"user already exists",
-  //       status:"failed"
-  //     })
-  // }
-
-
-  // });
-
 
 });
 
@@ -326,7 +323,39 @@ router.get('/same-school/:schoolId/:role', async (req, res) => {
 
 
 
+// get only principals for "admin side"
+router.get('/principals', async (req, res) => {
+  const {searchValue} = req.query;
 
+  if (searchValue.trim() !== "") {
+    const regex = new RegExp(searchValue, 'i');
+    
+    try {
+      const principals = await UserProfile.find(
+        {
+          role: "principal", 
+          "$or":[
+            {firstName: regex},
+            {lastName: regex}
+          ],
+        }
+      ).populate('schoolDetails');
+      res.status(200).json({message: "Principals fetched successfully", principals});
+    }
+    catch(err) {
+      res.status(500).json({err_msg: "API Error occured while fetching only principals", err_desc: err.message});
+    }
+  }
+  else {
+    try {
+      const principals = await UserProfile.find({role: "principal"}).populate('schoolDetails');
+      res.status(200).json({message: "Principals fetched successfully", principals});
+    }
+    catch(err) {
+      res.status(500).json({err_msg: "API Error occured while fetching only principals", err_desc: err.message});
+    }
+  }
+})
 
 
 
