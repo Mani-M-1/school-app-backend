@@ -19,7 +19,7 @@ const UserProfileSchema = mongoose.Schema({
    mobileNo: { type: Number, required: true},
    firstName:  {type:String, required: true},
    lastName:  {type:String, required: true}, 
-   role: {type:String, required: true, enum: ['student', 'professor', 'principal']}, // "student", "professor" and "principal" 
+   role: {type:String, required: true, enum: ['student', 'professor', 'principal', 'admin']}, // "student", "professor" and "principal" 
    school: {type: String, required: true}, // school name
    emergency: { type: Number}, // phone number to call in case of emergency
    profile: { type: String }, // profile image
@@ -29,6 +29,7 @@ const UserProfileSchema = mongoose.Schema({
    subjects: { type: String }, // only for "principal"
    schoolId: { type: String }, // (combination of "first letter of space seperated school name + 6 random digits ") generated while "principal" signup and this schoolId is assigned to students and professors (we should also send "schoolId" in email)
    address: { type: String },
+   schoolDetails: {type: mongoose.Schema.ObjectId, ref: "School"}, // with reference we can "polupate" the data when ever we need
    status: { type: String, enum: ["active", "inactive"] }, // active or blocked 
    enrolledCourses: [{CourseId: {type: String}, CourseDetails: {type: mongoose.Schema.ObjectId, ref: 'WeeklyCourse'}, CourseName: {type: String}, isChecked: {type: Boolean}, isCompleted: {type: Boolean}}], // only for students to show the "enrolled courses"
 });
