@@ -10,7 +10,6 @@ const config =  require('./config.js');
 
 
 
-
 console.log(`NODE_ENV=${config.NODE_ENV}`);
 console.log(`${config.HOST}`);
 console.log(`${config.MONGOOSE_URI}`);
