@@ -17,6 +17,17 @@ dotenv.config();
 
 
 
+const config =  require('./config.js');
+
+
+
+// const port = process.env.PORT || 3000;
+
+
+
+
+
+
 // connecting database 
 connectDB();
 
@@ -137,10 +148,18 @@ app.use((req, res, next) => {
 
 //for testing cyclic or vercel
 app.get("/", (req, res, next)=>{
+    // res.json({
+    //     name:"hello",
+    //     message:"i am working"
+    // })
     res.json({
         name:"hello",
-        message:"i am working"
+        message:"i am working",
+        nodeEnvironment: `NODE_ENV=${config.NODE_ENV}`,
+        host: `${config.HOST}`,
+        mongooseUri: `${config.MONGOOSE_URI}`
     })
+
 })
 
 
