@@ -156,8 +156,7 @@ app.get("/", (req, res, next)=>{
         name:"hello",
         message:"i am working",
         nodeEnvironment: `NODE_ENV=${config.NODE_ENV}`,
-        host: `${config.HOST}`,
-        mongooseUri: `${config.MONGOOSE_URI}`
+        host: `${config.HOST}`
     })
 
 })
