@@ -1,70 +1,23 @@
-// const express = require('express')
-// const app = express()
-// const router = express.Router();
-// const mongoose = require('mongoose');
-// const Course = require('./models/course');
-// const bodyParser = require('body-parser');
-
-
-// app.use(bodyParser.urlencoded({extended: true}));
-// app.use(bodyParser.json());
-// //mongo db connection
-// mongoose.connect('mongodb+srv://venuazmeera:mongo_venu69@cluster0.7ewrhqm.mongodb.net/?retryWrites=true&w=majority');
-
-// app.all('/', (req, res) => {
-//     console.log("Just got a request!")
-//     res.send('Yo!')
-// })
-
-
-// app.get('/course', (req, res, next) => {
-//    Course.find()
-//     .exec()
-//     .then( docs => {
-//         console.log(docs);
-//         res.status(200).json(docs);
-//     })
-//     .catch(err => {
-//         console.log(err);
-//         res.status(500).json({
-//             error: err
-//         });
-//     });
-// });
-
-// app.post('/course', (req, res, next) => {
-//     const course = new Course({
-//         _id: new mongoose.Types.ObjectId(),
-//         CourseName: req.body.CourseName,
-//         ProfessorName: req.body.ProfessorName,
-//         CourseDiscription: req.body.CourseDiscription,
-//         CourseBook: req.body.CourseBook
-
-//     });
-//     course
-//         .save()
-//         .then(result => {
-//             console.log(result);
-//             res.status(201).json({
-//                 massage: 'Handling POST requests to /courses',
-//                 courseCreated: result
-//             });
-//         })
-//         .catch(err => {
-//              console.log(err);
-//              res.status(500).json({
-//                 error: err
-//              });
-//         })
-// });
-
-// app.listen(process.env.PORT || 3000)
-
 const http = require ('http');
-const app = require('./app'); //i am calling app here from app.js
+const app = require('./app'); 
 
-const port = process.env.PORT || 3000;
+
+const config =  require('./config.js');
+
+
+
+// const port = process.env.PORT || 3000;
+
+
+
+
+console.log(`NODE_ENV=${config.NODE_ENV}`);
+console.log(`${config.HOST}`);
+console.log(`${config.MONGOOSE_URI}`);
+
+
+
 
 const server = http.createServer(app);
 
-server.listen(port, () => console.log('Listening to port 3000'));
+server.listen(config.PORT, () => console.log(`Listening to port ${config.PORT}`));

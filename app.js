@@ -11,7 +11,16 @@ const fileRead= require('express-fileupload');
 
 const dotenv = require('dotenv');
 
+const connectDB = require('./connectDB');
+
 dotenv.config();
+
+
+
+// connecting database 
+connectDB();
+
+
 
 
 //for hiding secret keys in .env file so no one can access
@@ -28,7 +37,7 @@ dotenv.config();
 
 //for mail sevice from node js
 // it used to send mails to users
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 
 // const multer = require('multer');
 // const upload = multer({ dest: 'uploads/'});
@@ -52,7 +61,7 @@ const { callbackPromise } = require('nodemailer/lib/shared');
 
 //mongo db connection
 // mongoose.connect('mongodb+srv://venuazmeera:mongo_venu69@cluster0.7ewrhqm.mongodb.net/?retryWrites=true&w=majority');
-mongoose.connect('mongodb+srv://sololegacySSDS:solomani@ssdscluster.eyxof4g.mongodb.net/school-app');
+// mongoose.connect('mongodb+srv://sololegacySSDS:solomani@ssdscluster.eyxof4g.mongodb.net/school-app');
 //appling pakages to our incoming requests
 //app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -72,26 +81,26 @@ if(process.env.NODE_ENV === 'development'){
 
 
 // // //for nodenailer
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    // port: 3000,
-    logger: true,
-    debug: true,
-    secureConnection: false,
-    auth : {
-        user: "venuazmeera69@gmail.com",
-        pass: "srquxcuhznnkngqe"
-    }
-});
+// const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     // port: 3000,
+//     logger: true,
+//     debug: true,
+//     secureConnection: false,
+//     auth : {
+//         user: "venuazmeera69@gmail.com",
+//         pass: "srquxcuhznnkngqe"
+//     }
+// });
 
 
-const options = {
-    // 
-    from: "venuazmeera69@gmail.com",
-    to: "venuazmeera69@gmail.com",
-    subject: "Sending mail with node js",
-    text: "hello there"
-};
+// const options = {
+//     // 
+//     from: "venuazmeera69@gmail.com",
+//     to: "venuazmeera69@gmail.com",
+//     subject: "Sending mail with node js",
+//     text: "hello there"
+// };
 
 
 // transporter.sendMail(options, function (err, info){
@@ -145,11 +154,11 @@ app.use(fileRead());
 //app.use(multer({ dest: './uploads/'}));
 
 //for making access key and screet keys to hide 
-const bucketName = process.env.AWS_BUCKET_NAME;
-// console.log(bucketName);
-const region = process.env.AWS_BUCKET_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_SECRET_KEY;
+// const bucketName = process.env.AWS_BUCKET_NAME;
+// // console.log(bucketName);
+// const region = process.env.AWS_BUCKET_REGION;
+// const accessKeyId = process.env.AWS_ACCESS_KEY;
+// const secretAccessKey = process.env.AWS_SECRET_KEY;
 
 //send video and audio and images and pdf's files to s3
 app.post('/uploadfile', (req, res) => {
@@ -157,7 +166,7 @@ app.post('/uploadfile', (req, res) => {
     console.log(req.files.filename);
   
   const s3 = new AWS.S3({
-     accessKeyId:"AKIAZ74FJQGL523L7WFP",
+    accessKeyId:"AKIAZ74FJQGL523L7WFP",
     secretAccessKey:"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"
   })
 
